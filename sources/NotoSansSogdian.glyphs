@@ -495,6 +495,10 @@ value = (
 );
 },
 {
+name = "Use Typo Metrics";
+value = 1;
+},
+{
 name = description;
 value = "Designed by Monotype design team.";
 },
@@ -517,10 +521,6 @@ value = "Version 2.002";
 {
 name = licenseURL;
 value = "https://scripts.sil.org/OFL";
-},
-{
-name = "Use Typo Metrics";
-value = 1;
 }
 );
 date = "2019-09-25 11:28:45 +0000";
@@ -1177,7 +1177,7 @@ name = Languagesystems;
 features = (
 {
 automatic = 1;
-code = "feature init;\012feature medi;\012feature fina;\012feature salt;\012feature ss01;\012feature ss02;\012feature ss03;\012feature ss04;\012feature ss05;\012feature ss06;\012feature ss07;\012feature ss08;\012feature ss09;\012feature ss10;\012feature ss11;\012feature ss12;\012feature ss13;\012feature ss14;\012feature ss15;\012feature ss20;\012feature ss21;\012feature ss22;\012feature ss23;\012";
+code = "feature init;\012feature medi;\012feature fina;\012feature salt;\012feature cv01;\012feature cv02;\012feature cv03;\012feature cv04;\012feature cv05;\012feature cv06;\012feature cv07;\012feature cv08;\012feature cv09;\012feature cv10;\012feature cv11;\012feature cv12;\012feature cv13;\012feature cv14;\012feature cv15;\012feature cv20;\012feature cv21;\012feature cv22;\012feature cv23;\012";
 name = aalt;
 },
 {
@@ -1202,98 +1202,98 @@ name = salt;
 },
 {
 code = "    sub LamedhSep by LamedhSep.hook;\012    sub LamedhFin by LamedhFin.hook;\012    sub LamedhMed by LamedhMed.hook;\012    sub LamedhIni by LamedhIni.hook;\012    sub LamedhMed.wide by LamedhMed.hookwide;\012    sub LamedhIni.wide by LamedhIni.hookwide;\012    sub LamedhMed.pewide by LamedhMed.pehookwide;\012    sub LamedhMed.pe by LamedhMed.pehook;\012    sub LamedhFin.pe by LamedhFin.pehook;\012";
-name = ss01;
-notes = "Name: ";
+name = cv01;
+notes = "Name: Alternate Lamedh";
 },
 {
 code = "    sub ZayinFin by ZayinFin.alt02;";
-name = ss02;
-notes = "Name: ";
+name = cv02;
+notes = "Name: Alternate final Zayin";
 },
 {
 code = "sub HethFin by HethFin.alt03;";
-name = ss03;
-notes = "Name: ";
+name = cv03;
+notes = "Name: Alternate final Heth";
 },
 {
 code = "sub KaphFin by KaphFin.alt04;";
-name = ss04;
-notes = "Name: ";
+name = cv04;
+notes = "Name: Alternate final Kaph";
 },
 {
 code = "sub NunFin by NunFin.alt05;";
-name = ss05;
-notes = "Name: ";
+name = cv05;
+notes = "Name: Alternate final Nun";
 },
 {
 code = "sub NunFin by NunFin.alt06;";
-name = ss06;
-notes = "Name: ";
+name = cv06;
+notes = "Name: Second alternate final Nun";
 },
 {
 code = "sub SadheFin by SadheFin.alt07;";
-name = ss07;
-notes = "Name: ";
+name = cv07;
+notes = "Name: Alternate final Sadhe";
 },
 {
 code = "sub SadheFin by SadheFin.alt08;";
-name = ss08;
-notes = "Name: ";
+name = cv08;
+notes = "Name: Second alternate final Sadhe";
 },
 {
 code = "sub SadheFin by SadheFin.alt09;";
-name = ss09;
-notes = "Name: ";
+name = cv09;
+notes = "Name: Third alternate final Sadhe";
 },
 {
 code = "sub SadheFin by SadheFin.alt10;";
-name = ss10;
-notes = "Name: ";
+name = cv10;
+notes = "Name: Fourth alternate final Sadhe";
 },
 {
 code = "sub SadheFin by SadheFin.alt11;";
-name = ss11;
-notes = "Name: ";
+name = cv11;
+notes = "Name: Fifth alternate final Sadhe";
 },
 {
 code = "    sub TawFin by TawFin.alt12;\012    sub TawFin.XS by TawFin.alt12XS;\012";
-name = ss12;
-notes = "Name: ";
+name = cv12;
+notes = "Name: Alternate final Taw";
 },
 {
 code = "    sub TawFin by TawFin.alt13;";
-name = ss13;
-notes = "Name: ";
+name = cv13;
+notes = "Name: Second alternate final Taw";
 },
 {
 code = "    sub TawFin by TawFin.alt14;\012";
-name = ss14;
-notes = "Name: ";
+name = cv14;
+notes = "Name: Third alternate final Taw";
 },
 {
 code = "sub TawFin by TawFin.alt15;";
-name = ss15;
-notes = "Name: ";
+name = cv15;
+notes = "Name: Fourth final Taw";
 },
 {
 code = "sub dotbelowSogd by dotbelowSogd.rho;\012sub twodotsbelowSogd by twodotsbelowSogd.rho;\012sub dotaboveSogd by dotaboveSogd.rho;\012sub twodotsaboveSogd by twodotsaboveSogd.rho;\012sub u10F56 by u10F56.rho;";
-name = ss20;
-notes = "Name: ";
+name = cv20;
+notes = "Name: Diamond-shaped dots";
 },
 {
 code = "sub u10F55 by u10F55.altA;";
-name = ss21;
-notes = "Name: ";
+name = cv21;
+notes = "Name: Shorter vertical bars";
 },
 {
 code = "sub u10F55 by u10F55.dot;";
-name = ss22;
-notes = "Name: ";
+name = cv22;
+notes = "Name: Dots instead of vertical bars";
 },
 {
 code = "    sub u10F55 by u10F55.rho;\012";
-name = ss23;
-notes = "Name: ";
+name = cv23;
+notes = "Name: Diamond-shaped dots instead of vertical bars";
 },
 {
 code = "# Automatic Code Start\012";

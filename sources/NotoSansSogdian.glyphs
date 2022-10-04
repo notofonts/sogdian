@@ -1201,99 +1201,80 @@ code = "    sub LamedhSep by LamedhSep.hook;\012    sub LamedhFin by LamedhFin.h
 name = salt;
 },
 {
-code = "    sub LamedhSep by LamedhSep.hook;\012    sub LamedhFin by LamedhFin.hook;\012    sub LamedhMed by LamedhMed.hook;\012    sub LamedhIni by LamedhIni.hook;\012    sub LamedhMed.wide by LamedhMed.hookwide;\012    sub LamedhIni.wide by LamedhIni.hookwide;\012    sub LamedhMed.pewide by LamedhMed.pehookwide;\012    sub LamedhMed.pe by LamedhMed.pehook;\012    sub LamedhFin.pe by LamedhFin.pehook;\012";
+code = "\012    sub LamedhSep by LamedhSep.hook;\012    sub LamedhFin by LamedhFin.hook;\012    sub LamedhMed by LamedhMed.hook;\012    sub LamedhIni by LamedhIni.hook;\012    sub LamedhMed.wide by LamedhMed.hookwide;\012    sub LamedhIni.wide by LamedhIni.hookwide;\012    sub LamedhMed.pewide by LamedhMed.pehookwide;\012    sub LamedhMed.pe by LamedhMed.pehook;\012    sub LamedhFin.pe by LamedhFin.pehook;\012";
 name = cv01;
-notes = "Name: Alternate Lamedh";
 },
 {
 code = "    sub ZayinFin by ZayinFin.alt02;";
 name = cv02;
-notes = "Name: Alternate final Zayin";
 },
 {
 code = "sub HethFin by HethFin.alt03;";
 name = cv03;
-notes = "Name: Alternate final Heth";
 },
 {
 code = "sub KaphFin by KaphFin.alt04;";
 name = cv04;
-notes = "Name: Alternate final Kaph";
 },
 {
 code = "sub NunFin by NunFin.alt05;";
 name = cv05;
-notes = "Name: Alternate final Nun";
 },
 {
 code = "sub NunFin by NunFin.alt06;";
 name = cv06;
-notes = "Name: Second alternate final Nun";
 },
 {
 code = "sub SadheFin by SadheFin.alt07;";
 name = cv07;
-notes = "Name: Alternate final Sadhe";
 },
 {
 code = "sub SadheFin by SadheFin.alt08;";
 name = cv08;
-notes = "Name: Second alternate final Sadhe";
 },
 {
 code = "sub SadheFin by SadheFin.alt09;";
 name = cv09;
-notes = "Name: Third alternate final Sadhe";
 },
 {
 code = "sub SadheFin by SadheFin.alt10;";
 name = cv10;
-notes = "Name: Fourth alternate final Sadhe";
 },
 {
 code = "sub SadheFin by SadheFin.alt11;";
 name = cv11;
-notes = "Name: Fifth alternate final Sadhe";
 },
 {
 code = "    sub TawFin by TawFin.alt12;\012    sub TawFin.XS by TawFin.alt12XS;\012";
 name = cv12;
-notes = "Name: Alternate final Taw";
 },
 {
 code = "    sub TawFin by TawFin.alt13;";
 name = cv13;
-notes = "Name: Second alternate final Taw";
 },
 {
 code = "    sub TawFin by TawFin.alt14;\012";
 name = cv14;
-notes = "Name: Third alternate final Taw";
 },
 {
 code = "sub TawFin by TawFin.alt15;";
 name = cv15;
-notes = "Name: Fourth final Taw";
 },
 {
 code = "sub dotbelowSogd by dotbelowSogd.rho;\012sub twodotsbelowSogd by twodotsbelowSogd.rho;\012sub dotaboveSogd by dotaboveSogd.rho;\012sub twodotsaboveSogd by twodotsaboveSogd.rho;\012sub u10F56 by u10F56.rho;";
 name = cv20;
-notes = "Name: Diamond-shaped dots";
 },
 {
 code = "sub u10F55 by u10F55.altA;";
 name = cv21;
-notes = "Name: Shorter vertical bars";
 },
 {
 code = "sub u10F55 by u10F55.dot;";
 name = cv22;
-notes = "Name: Dots instead of vertical bars";
 },
 {
 code = "    sub u10F55 by u10F55.rho;\012";
 name = cv23;
-notes = "Name: Diamond-shaped dots instead of vertical bars";
 },
 {
 code = "# Automatic Code Start\012";

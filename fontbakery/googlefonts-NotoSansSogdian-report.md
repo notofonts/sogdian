@@ -2,30 +2,7 @@
 
 Fontbakery version: 0.8.10
 
-<details><summary><b>[6] NotoSansSogdian-Regular.ttf</b></summary><div><details><summary>🔥 <b>FAIL:</b> Does the font have any invalid feature tags? (<a href="https://font-bakery.readthedocs.io/en/stable/fontbakery/profiles/layout.html#com.google.fonts/check/layout_valid_feature_tags">com.google.fonts/check/layout_valid_feature_tags</a>)</summary><div>
-
-
-* 🔥 **FAIL** The following invalid feature tags were found in the font: ss21, ss22, ss23 [code: bad-feature-tags]
-</div></details><details><summary>⚠ <b>WARN:</b> Ensure Stylistic Sets have description. (<a href="https://font-bakery.readthedocs.io/en/stable/fontbakery/profiles/googlefonts.html#com.google.fonts/check/stylisticset_description">com.google.fonts/check/stylisticset_description</a>)</summary><div>
-
-
-* ⚠ **WARN** The stylistic set ss01 lacks a description string on the 'name' table. [code: missing-description]
-* ⚠ **WARN** The stylistic set ss02 lacks a description string on the 'name' table. [code: missing-description]
-* ⚠ **WARN** The stylistic set ss03 lacks a description string on the 'name' table. [code: missing-description]
-* ⚠ **WARN** The stylistic set ss04 lacks a description string on the 'name' table. [code: missing-description]
-* ⚠ **WARN** The stylistic set ss05 lacks a description string on the 'name' table. [code: missing-description]
-* ⚠ **WARN** The stylistic set ss06 lacks a description string on the 'name' table. [code: missing-description]
-* ⚠ **WARN** The stylistic set ss07 lacks a description string on the 'name' table. [code: missing-description]
-* ⚠ **WARN** The stylistic set ss08 lacks a description string on the 'name' table. [code: missing-description]
-* ⚠ **WARN** The stylistic set ss09 lacks a description string on the 'name' table. [code: missing-description]
-* ⚠ **WARN** The stylistic set ss10 lacks a description string on the 'name' table. [code: missing-description]
-* ⚠ **WARN** The stylistic set ss11 lacks a description string on the 'name' table. [code: missing-description]
-* ⚠ **WARN** The stylistic set ss12 lacks a description string on the 'name' table. [code: missing-description]
-* ⚠ **WARN** The stylistic set ss13 lacks a description string on the 'name' table. [code: missing-description]
-* ⚠ **WARN** The stylistic set ss14 lacks a description string on the 'name' table. [code: missing-description]
-* ⚠ **WARN** The stylistic set ss15 lacks a description string on the 'name' table. [code: missing-description]
-* ⚠ **WARN** The stylistic set ss20 lacks a description string on the 'name' table. [code: missing-description]
-</div></details><details><summary>⚠ <b>WARN:</b> Ensure fonts have ScriptLangTags declared on the 'meta' table. (<a href="https://font-bakery.readthedocs.io/en/stable/fontbakery/profiles/googlefonts.html#com.google.fonts/check/meta/script_lang_tags">com.google.fonts/check/meta/script_lang_tags</a>)</summary><div>
+<details><summary><b>[4] NotoSansSogdian-Regular.ttf</b></summary><div><details><summary>⚠ <b>WARN:</b> Ensure fonts have ScriptLangTags declared on the 'meta' table. (<a href="https://font-bakery.readthedocs.io/en/stable/fontbakery/profiles/googlefonts.html#com.google.fonts/check/meta/script_lang_tags">com.google.fonts/check/meta/script_lang_tags</a>)</summary><div>
 
 
 * ⚠ **WARN** This font file does not have a 'meta' table. [code: lacks-meta-table]
@@ -84,8 +61,8 @@ Use -F or --full-lists to disable shortening of long lists. [code: found-misalig
 
 | 💔 ERROR | 🔥 FAIL | ⚠ WARN | 💤 SKIP | ℹ INFO | 🍞 PASS | 🔎 DEBUG |
 |:-----:|:----:|:----:|:----:|:----:|:----:|:----:|
-| 0 | 1 | 5 | 110 | 7 | 104 | 0 |
-| 0% | 0% | 2% | 48% | 3% | 46% | 0% |
+| 0 | 0 | 4 | 110 | 7 | 106 | 0 |
+| 0% | 0% | 2% | 48% | 3% | 47% | 0% |
 
 **Note:** The following loglevels were omitted in this report:
 * **SKIP**

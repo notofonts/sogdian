@@ -1,0 +1,667 @@
+<!DOCTYPE html>
+<html lang="en" dir="auto">
+
+<head>
+	<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+	<title>Diffenator3</title>
+	<script src="https://cdn.jsdelivr.net/npm/jquery@3.5.1/dist/jquery.min.js" crossorigin="anonymous"></script>
+	<script src="https://cdn.jsdelivr.net/npm/bootstrap@4.6.2/dist/js/bootstrap.bundle.min.js"
+		integrity="sha384-Fy6S3B9q64WdZWQUiU+q4/2Lc9npb8tCaSX9FK7E8HnRr0Jz8D6OP9dO5Vg3Q9ct"
+		crossorigin="anonymous"></script>
+	<style type="text/css">
+		@font-face {
+      font-family: "Font Before";
+      src: url();
+    }
+
+    @font-face {
+      font-family: "Font After";
+      src: url();
+    }
+
+    .font-before, .font-after {
+      font-variation-settings: "wght" 400, "wdth" 100;
+    }
+
+    .font-before {
+      font-family: "Font Before", "Adobe Notdef";
+    }
+
+    .font-after {
+      font-family: "Font After", "Adobe Notdef";
+    }
+
+	:root {
+	--node-pt-size: 40px;
+	}
+
+	@import url('https://fonts.googleapis.com/css2?family=Montserrat:ital,wght@0,100..900;1,100..900&display=swap');
+
+body {
+    background-color: #b3d4f5 !important;
+    font-family: "Montserrat", sans-serif !important;
+}
+
+.nav-pills .nav-item.show .nav-link, .nav-pills .nav-link.active {
+    background-color: #ced9e4 !important;
+}
+.nav-item {
+    width: 100%;
+    margin-bottom: 10px;
+    padding: 2px;
+}
+
+.nav-pills .nav-link{
+    background-color: #9fcaf5 !important;
+}
+h4 {
+    color: #6f7882 !important;
+}
+
+@font-face {
+    font-family: "Adobe NotDef";
+    src: url(https://cdn.jsdelivr.net/gh/adobe-fonts/adobe-notdef/AND-Regular.ttf);
+}
+
+.box-title {
+    width: 100%;
+    font-size: 8pt;
+    font-weight: 700;
+    border-top: 1px solid black;
+    padding-top: 5px;
+    margin-bottom: 10pt;
+    display: block;
+}
+
+.box {
+    margin-bottom: 20pt;
+    width: 100%;
+    float: left;
+}
+
+.box-text {}
+
+#ui-nav {
+    position: fixed;
+    right: 20px;
+    z-index: 100;
+}
+
+#font-toggle {}
+
+.ui-nav-item {
+    display: block;
+    cursor: pointer;
+    -webkit-user-select: none;
+    /* Safari */
+    -moz-user-select: none;
+    /* Firefox */
+    -ms-user-select: none;
+    /* IE10+/Edge */
+    user-select: none;
+    /* Standard */
+    text-align: center;
+    color: white;
+    background-color: black;
+    display: block;
+    font-size: 14pt;
+    padding: 5px;
+    margin: 2px;
+}
+
+/* Stuff needed for the table differ */
+body {
+    font-family: Helvetica;
+}
+
+.node {
+    font-family: courier;
+    cursor: pointer;
+    position: relative;
+    left: 30px;
+    padding: 5px;
+    display: block;
+    border: 1px dashed grey;
+    background-color: #e9e9ee;
+}
+
+.header {
+    font-weight: bold;
+}
+
+.attr-before {
+    color: green;
+    cursor: text;
+}
+
+.attr-after {
+    color: red;
+    cursor: text;
+}
+
+.leaf {
+    font-weight: bold;
+}
+
+.old .cell .new {
+    display: none;
+}
+
+.new .cell .old {
+    display: none;
+}
+
+.both .cell .old {
+    opacity: 0.75;
+    color: red;
+}
+
+.both .cell .new {
+    opacity: 0.75;
+    position: absolute;
+    top: 0;
+    color: green;
+}
+
+.spacer {
+    display: block;
+    float: left;
+    width: 100%;
+}
+
+#ot-panel {
+    max-height: 400px;
+    overflow-y: scroll;
+    background: white;
+    padding: 10px;
+    display: none;
+   }
+
+   .cell{
+    z-index: -100;
+    float: left;
+    display: block;
+    text-align: center;
+    padding: 5pt;
+    margin: 5pt;
+    width: 50pt;
+    font-size: var(--node-pt-size);
+    line-height: calc(var(--node-pt-size) * 1.5);
+  }
+  .cell-word{
+    z-index: -100;
+    float: left;
+    display: block;
+    text-align: center;
+    padding: 5pt;
+    margin: 5pt;
+    font-size: var(--node-pt-size);
+    line-height: calc(var(--node-pt-size) * 1.5);
+    box-shadow: rgba(0, 0, 0, 0.15) 1.95px 1.95px 2.6px;
+  }
+  .cell-glyph{
+    z-index: -100;
+    float: left;
+    display: block;
+    text-align: center;
+    border-radius: 5pt;
+    box-shadow: rgba(0, 0, 0, 0.15) 1.95px 1.95px 2.6px;
+    padding: 5pt;
+    margin: 5pt;
+    width: calc(var(--node-pt-size) * 2);
+    min-height: calc(var(--node-pt-size) * 2);
+    font-size: var(--node-pt-size);
+  }
+  .cell-glyph.font-before, .cell-word.font-before {
+    background: #eff6f2;
+  }
+  .cell-glyph.font-after, .cell-word.font-after {
+    background: #f7f4f4;
+  }
+
+  .cell-glyph:hover {
+    box-shadow: none;
+    background: #f0f0f5;
+  }
+  .cat-strings .cell {
+    clear: both;
+    position: static;
+    float: none;
+    text-align: left;
+  }
+  .codepoint {
+    text-align: center;
+    font-family: sans-serif;
+    font-size: 10pt;
+    line-height: 10pt;
+  }
+  .box-title {
+    clear: both;
+  }
+  .node.closed::before {
+    content: "+";
+    margin-right: 5pt;
+  }
+  .node.open::before {
+    content: "-";
+    margin-right: 5pt;
+  }
+
+  .tooltip pre {
+    background-color: #6f7882;
+    padding: 5px;
+    white-space: pre-wrap;
+    word-break: break-all;
+  }
+  .tooltip {
+    line-height: 1em;
+  }
+  .tooltip-inner {
+    max-width: 300px;
+  }
+
+  h1,h2,h3,h4,h5 {
+    clear: both;
+  }
+
+  #locationnav li {
+    white-space: wrap;
+  }
+
+  #userdefined div { width: 100%; }
+  
+/* The following rules are used in the WASM version, not in the CLI version.
+   But we keep them here so we can share them between the two versions. */
+
+   .modal-dialog {
+    max-width: 100% !important;
+    margin: 0 !important;
+    top: 0;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    height: 100vh;
+    display: flex;
+  }
+
+  .fontdrop {
+    padding: 30px;
+    border-radius: 20px;
+    outline: 3px dashed #ffffffff;
+    outline-offset: -20px;
+  }
+
+  #fontbefore {
+    background-color: #ddffdddd;
+  }
+
+  #fontafter {
+    background-color: #ffdddddd;
+  }
+
+  .dragging {
+    background-image: linear-gradient(rgb(0 0 0/5%) 0 0);
+    outline: 5px dashed #ffffffff;
+  }
+
+  #diffkerns {
+    max-height: 500px;
+    overflow-y: scroll;
+  }
+		</style>
+	<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.6.2/dist/css/bootstrap.min.css"
+	integrity="sha384-xOolHFLEh07PJGoPkLv1IbcEPTNtaed2xpHsD9ESMhqIYd0nLMwNLD69Npy4HI+N" crossorigin="anonymous">
+
+</head>
+
+<body>
+
+		<div id="ui-nav">
+		  <div class="ui-nav-item" id="fonttoggle">Old</div>
+		  <div class="ui-nav-item" id="fontanimate">Animate</div>
+		  <div id="axes">
+		  </div>
+		</div>
+	
+	<div class="row">
+		<div class="col-2">
+			<ul class="nav nav-pills" id="locationnav">
+			</ul>
+		</div>
+		<div class="col-9 mt-3">
+			<div id="title"></div>
+			<div id="cmapdiff"> </div>
+			<div id="main"></div>
+			<div id="userdefined">
+				<h4>User defined sample text</h4>
+				<div contenteditable="true" class="font-before cell-word">
+					You can type your own text here to see it previewed in the fonts.
+				</div>
+				<div style="clear: both"></div>
+			</div>
+			<div id="diffkerns"> </div>
+			<div id="difftable"> </div>
+		</div>
+	</div>
+	<script type="module">
+		function renderTableDiff(node, toplevel) {
+  var wrapper = $("<div> </div>");
+  if (!node) {
+    return wrapper;
+  }
+  if (Array.isArray(node) && node.length == 2) {
+    var before = $("<span/>");
+    before.addClass("attr-before");
+    before.html(" " + node[0] + " ");
+    var after = $("<span/>");
+    after.addClass("attr-after");
+    after.append(renderTableDiff(node[1], true).children());
+    wrapper.append(before);
+    wrapper.append(after);
+    return wrapper;
+  }
+  if (node.constructor != Object) {
+    var thing = $("<span/>");
+    thing.html(node);
+    wrapper.append(thing);
+    return wrapper;
+  }
+  for (const [key, value] of Object.entries(node)) {
+    var display = $("<div/>");
+    display.addClass("node");
+    if (!toplevel) {
+      display.hide();
+    }
+    display.append(key);
+    display.append(renderTableDiff(value, false).children());
+    if (display.children(".node").length > 0) {
+      display.addClass("closed");
+    }
+    wrapper.append(display);
+  }
+  return wrapper;
+}
+
+function addAGlyph(glyph, where) {
+  let title = "";
+  if (glyph.name) {
+    title = "name: " + glyph.name;
+  }
+  let cp =
+    "<br>U+" +
+    glyph.string.codePointAt(0).toString(16).padStart(4, "0").toUpperCase();
+  where.append(`
+        <div class="cell-glyph font-before">
+        <div data-toggle="tooltip" data-html="true" data-title="${glyph.differing_pixels} pixels"> ${glyph.string}
+        <div class="codepoint" data-toggle="tooltip" data-html="true" data-title="${title}">
+		${cp}
+        </div>
+        </div>
+    `);
+}
+
+function addAWord(diff, where) {
+  if (!diff.buffer_b) {
+    diff.buffer_b = diff.buffer_a;
+  }
+  where.append(`
+		<div class="cell-word font-before">
+		<span data-toggle="tooltip" data-html="true" data-title="Before: <pre>${diff.buffer_a}</pre>After: <pre>${diff.buffer_b}</pre><br>difference: ${diff.differing_pixels} pixels">
+		${diff.word}
+		</span>
+		</div>
+	`);
+}
+
+function diffTables(report) {
+  $("#difftable").empty();
+  $("#difftable").append(`<h4 class="mt-2 box-title">Table-level details</h4>`);
+  $("#difftable").append(
+    renderTableDiff({ tables: report["tables"] }, true).children()
+  );
+  $("#difftable .node").on("click", function (e) {
+    $(this).toggleClass("closed open");
+    $(this).children(".node").toggle();
+    e.stopPropagation();
+  });
+}
+function diffKerns(report) {
+  $("#diffkerns").empty();
+  $("#diffkerns").append(`<h4 class="mt-2">Modified Kerns</h4>`);
+  $("#diffkerns").append(
+    `<table class="table table-striped" id="diffkerns"><tr><th>Pair</th><th>Old</old><th>New</th></table>`
+  );
+  for (let [pair, value] of Object.entries(report["kerns"])) {
+    if (pair == "error") {
+      $("#diffkerns").append(`<p class="text-danger">Error: ${value}</p>`);
+      continue;
+    } else {
+      let row = $("<tr>");
+      row.append(`<td>${pair}</td>`);
+      row.append(`<td>${serializeKernBefore(value)}</td>`);
+      row.append(`<td>${serializeKernAfter(value)}</td>`);
+      $("#diffkerns table").append(row);
+    }
+  }
+}
+
+function serializeKernBefore(kern) {
+  if (Array.isArray(kern)) {
+    return serializeKern(kern[0], -1);
+  }
+  return serializeKern(kern, 0);
+}
+
+function serializeKernAfter(kern) {
+  if (Array.isArray(kern)) {
+    return serializeKern(kern[1], -1);
+  }
+  return serializeKern(kern, 1);
+}
+
+function serializeKern(kern, index) {
+  let string = "";
+  if (kern === null || kern === undefined) {
+    return "(null)";
+  }
+  if (kern.x) {
+    string += serializeKernValue(kern.x, index);
+  } else if (kern.y) {
+    string = "0";
+  }
+
+  if (kern.y) {
+    string += "," + serializeKernValue(kern.y, index);
+  }
+  if (!kern.x_placement && !kern.y_placement) {
+    return string;
+  }
+  string += "@";
+  if (kern.x_placement) {
+    string += serializeKernValue(kern.x_placement, index);
+  } else if (kern.y_placement) {
+    string += "0";
+  }
+  if (kern.y_placement) {
+    string += "," + serializeKernValue(kern.y_placement, index);
+  }
+  return string;
+}
+
+function serializeKernValue(kern, index) {
+  if (typeof kern == "number") {
+    return kern;
+  }
+  let string = "(";
+  let verybig = Object.entries(kern).length > 5;
+  for (let [key, value] of Object.entries(kern)) {
+    if (key == "default") {
+      string += value[index] + " ";
+    } else {
+      string += value[index] + "@" + key + " ";
+    }
+    if (verybig) {
+      string += "<br>";
+    }
+  }
+  return string.trim() + ")";
+}
+
+function cmapDiff(report) {
+  if (report.cmap_diff && (report.cmap_diff.new || report.cmap_diff.missing)) {
+    $("#cmapdiff").append(
+      `<h4 class="mt-2">Added and Removed Encoded Glyphs</h4>`
+    );
+    if (report["cmap_diff"]["new"]) {
+      $("#cmapdiff").append(`<h4 class="box-title">Added Glyphs</h4>`);
+      let added = $("<div>");
+      for (let glyph of report["cmap_diff"]["new"]) {
+        addAGlyph(glyph, added);
+      }
+      $("#cmapdiff").append(added);
+    }
+
+    if (report["cmap_diff"]["missing"]) {
+      $("#cmapdiff").append(`<h4 class="box-title">Removed Glyphs</h4>`);
+      let missing = $("<div>");
+      for (let glyph of report["cmap_diff"]["missing"]) {
+        addAGlyph(glyph, missing);
+      }
+      $("#cmapdiff").append(missing);
+    }
+  } else {
+    $("#cmapdiff").append(`<p>No changes to encoded glyphs</p>`);
+  }
+}
+
+function setupAnimation() {
+  $("#fonttoggle").click(function () {
+    if ($(this).text() == "Old") {
+      $(this).text("New");
+      $(".font-before").removeClass("font-before").addClass("font-after");
+    } else {
+      $(this).text("Old");
+      $(".font-after").removeClass("font-after").addClass("font-before");
+    }
+  });
+
+  let animationHandle;
+  function animate() {
+    $("#fonttoggle").click();
+    animationHandle = setTimeout(animate, 1000);
+  }
+  $("#fontanimate").click(function () {
+    if ($(this).text() == "Animate") {
+      $(this).text("Stop");
+      animate();
+    } else {
+      $(this).text("Animate");
+      clearTimeout(animationHandle);
+    }
+  });
+}
+
+export {
+  renderTableDiff,
+  addAGlyph,
+  addAWord,
+  cmapDiff,
+  diffTables,
+  diffKerns,
+  setupAnimation,
+};
+
+	var report = {"tables":{"GPOS":{"feature_list":{"abvm":{"1":[null,1],"2":[null,2]},"mark":{"0":[1,3],"1":[null,4],"2":[null,5]}},"lookup_list":{"0":{"0":{"marks":{"anchor_1":[{"dotaboveSogd":{"x":0,"y":542},"twodotsaboveSogd":{"x":0,"y":542},"curveaboveSogd":{"x":0,"y":542},"hookaboveSogd":{"x":0,"y":542},"hookaboveSogd.alt":{"x":0,"y":542},"dotaboveSogd.rho":{"x":0,"y":542},"twodotsaboveSogd.rho":{"x":0,"y":542}},null],"anchor_2":[{"strokebelowSogd":{"x":0,"y":0},"strokebelowSogd.2":{"x":0,"y":0},"strokebelowSogd.3":{"x":0,"y":0},"strokebelowSogd.4":{"x":0,"y":0},"strokebelowSogd.5":{"x":0,"y":0},"strokebelowSogd.6":{"x":0,"y":0},"strokebelowSogd.7":{"x":0,"y":0}},null]},"bases":{"error":"There are 306 changes, check manually!"}}},"1":{"0":{"marks":{"anchor_0":{"dotbelowSogd":[{"x":0,"y":0},null],"twodotsbelowSogd":[{"x":0,"y":0},null],"curvebelowSogd":[{"x":0,"y":0},null],"hookbelowSogd":[{"x":0,"y":0},null],"longhookbelowSogd":[{"x":0,"y":0},null],"reshbelowSogd":[{"x":0,"y":0},null],"dotbelowSogd.rho":[{"x":0,"y":0},null],"twodotsbelowSogd.rho":[{"x":0,"y":0},null],"strokebelowSogd":[null,{"x":0,"y":0}],"strokebelowSogd.2":[null,{"x":0,"y":0}],"strokebelowSogd.3":[null,{"x":0,"y":0}],"strokebelowSogd.4":[null,{"x":0,"y":0}],"strokebelowSogd.5":[null,{"x":0,"y":0}],"strokebelowSogd.6":[null,{"x":0,"y":0}],"strokebelowSogd.7":[null,{"x":0,"y":0}]},"anchor_1":[{"dotaboveSogd":{"x":0,"y":542},"twodotsaboveSogd":{"x":0,"y":542},"curveaboveSogd":{"x":0,"y":542},"hookaboveSogd":{"x":0,"y":542},"hookaboveSogd.alt":{"x":0,"y":542},"dotaboveSogd.rho":{"x":0,"y":542},"twodotsaboveSogd.rho":{"x":0,"y":542}},null],"anchor_2":[{"strokebelowSogd":{"x":0,"y":0},"strokebelowSogd.2":{"x":0,"y":0},"strokebelowSogd.3":{"x":0,"y":0},"strokebelowSogd.4":{"x":0,"y":0},"strokebelowSogd.5":{"x":0,"y":0},"strokebelowSogd.6":{"x":0,"y":0},"strokebelowSogd.7":{"x":0,"y":0}},null]},"bases":{"error":"There are 307 changes, check manually!"}}},"2":[null,[{"type":"mark_to_base","marks":{"anchor_0":{"dotaboveSogd":{"x":0,"y":542},"twodotsaboveSogd":{"x":0,"y":542},"curveaboveSogd":{"x":0,"y":542},"hookaboveSogd":{"x":0,"y":542},"hookaboveSogd.alt":{"x":0,"y":542},"dotaboveSogd.rho":{"x":0,"y":542},"twodotsaboveSogd.rho":{"x":0,"y":542}}},"bases":{"AlephSep":{"anchor_0":{"x":515,"y":441}},"BethSep":{"anchor_0":{"x":459,"y":442}},"GimelSep":{"anchor_0":{"x":391,"y":442}},"HeSep":{"anchor_0":{"x":517,"y":442}},"WawSep":{"anchor_0":{"x":280,"y":472}},"ZayinSep":{"anchor_0":{"x":203,"y":442}},"HethSep":{"anchor_0":{"x":518,"y":442}},"YodhSep":{"anchor_0":{"x":259,"y":497}},"KaphSep":{"anchor_0":{"x":475,"y":442}},"LamedhSep":{"anchor_0":{"x":150,"y":754}},"MemSep":{"anchor_0":{"x":268,"y":465}},"NunSep":{"anchor_0":{"x":406,"y":442}},"SamekhSep":{"anchor_0":{"x":389,"y":443}},"AyinSep":{"anchor_0":{"x":463,"y":622}},"PeSep":{"anchor_0":{"x":521,"y":473}},"SadheSep":{"anchor_0":{"x":482,"y":442}},"ReshSep":{"anchor_0":{"x":252,"y":444}},"ShinSep":{"anchor_0":{"x":496,"y":402}},"TawSep":{"anchor_0":{"x":508,"y":360}},"FethSep":{"anchor_0":{"x":549,"y":443}},"LeshSep":{"anchor_0":{"x":243,"y":442}},"IndShin":{"anchor_0":{"x":714,"y":416}},"oneSogdSep":{"anchor_0":{"x":188,"y":411}},"tenSogdSep":{"anchor_0":{"x":216,"y":600}},"twentySogdSep":{"anchor_0":{"x":309,"y":699}},"hundredSogdSep":{"anchor_0":{"x":874,"y":441}},"AlephFin":{"anchor_0":{"x":515,"y":441}},"BethFin":{"anchor_0":{"x":459,"y":442}},"SadheIni":{"anchor_0":{"x":264,"y":443}},"SadheMed":{"anchor_0":{"x":264,"y":443}},"AlephMed":{"anchor_0":{"x":210,"y":441}},"AlephIni":{"anchor_0":{"x":210,"y":441}},"BethMed":{"anchor_0":{"x":224,"y":442}},"BethIni":{"anchor_0":{"x":225,"y":442}},"GimelFin":{"anchor_0":{"x":391,"y":443}},"GimelMed":{"anchor_0":{"x":280,"y":442}},"GimelIni":{"anchor_0":{"x":278,"y":442}},"HeFin":{"anchor_0":{"x":517,"y":443}},"WawFin":{"anchor_0":{"x":279,"y":472}},"WawMed":{"anchor_0":{"x":280,"y":472}},"WawIni":{"anchor_0":{"x":286,"y":472}},"ZayinFin":{"anchor_0":{"x":202,"y":443}},"ZayinMed":{"anchor_0":{"x":185,"y":442}},"ZayinIni":{"anchor_0":{"x":186,"y":443}},"HethFin":{"anchor_0":{"x":519,"y":442}},"HethMed":{"anchor_0":{"x":278,"y":443}},"HethIni":{"anchor_0":{"x":279,"y":443}},"YodhFin":{"anchor_0":{"x":261,"y":498}},"YodhMed":{"anchor_0":{"x":149,"y":498}},"YodhIni":{"anchor_0":{"x":149,"y":498}},"KaphFin":{"anchor_0":{"x":456,"y":442}},"KaphMed":{"anchor_0":{"x":218,"y":442}},"KaphIni":{"anchor_0":{"x":237,"y":442}},"LamedhFin":{"anchor_0":{"x":150,"y":755}},"LamedhMed":{"anchor_0":{"x":-52,"y":756}},"LamedhIni":{"anchor_0":{"x":-52,"y":755}},"MemFin":{"anchor_0":{"x":267,"y":467}},"MemMed":{"anchor_0":{"x":160,"y":401}},"MemIni":{"anchor_0":{"x":159,"y":400}},"NunFin":{"anchor_0":{"x":394,"y":442}},"NunMed":{"anchor_0":{"x":186,"y":444}},"NunIni":{"anchor_0":{"x":186,"y":442}},"SamekhFin":{"anchor_0":{"x":392,"y":443}},"SamekhMed":{"anchor_0":{"x":288,"y":442}},"SamekhIni":{"anchor_0":{"x":287,"y":443}},"AyinFin":{"anchor_0":{"x":462,"y":624}},"AyinMed":{"anchor_0":{"x":461,"y":621}},"AyinIni":{"anchor_0":{"x":463,"y":621}},"PeFin":{"anchor_0":{"x":523,"y":472}},"PeMed":{"anchor_0":{"x":263,"y":473}},"PeIni":{"anchor_0":{"x":264,"y":474}},"SadheFin":{"anchor_0":{"x":480,"y":444}},"ReshFin":{"anchor_0":{"x":246,"y":442}},"ReshMed":{"anchor_0":{"x":225,"y":442}},"ReshIni":{"anchor_0":{"x":224,"y":443}},"ShinFin":{"anchor_0":{"x":497,"y":402}},"ShinMed":{"anchor_0":{"x":481,"y":403}},"ShinIni":{"anchor_0":{"x":417,"y":397}},"TawFin":{"anchor_0":{"x":509,"y":364}},"TawMed":{"anchor_0":{"x":290,"y":361}},"TawIni":{"anchor_0":{"x":290,"y":361}},"FethFin":{"anchor_0":{"x":550,"y":444}},"FethMed":{"anchor_0":{"x":303,"y":444}},"FethIni":{"anchor_0":{"x":304,"y":443}},"LeshFin":{"anchor_0":{"x":243,"y":443}},"LeshMed":{"anchor_0":{"x":230,"y":443}},"LeshIni":{"anchor_0":{"x":220,"y":442}},"oneSogdFin":{"anchor_0":{"x":188,"y":411}},"oneSogdMed":{"anchor_0":{"x":168,"y":411}},"oneSogdIni":{"anchor_0":{"x":168,"y":411}},"tenSogdFin":{"anchor_0":{"x":216,"y":599}},"tenSogdMed":{"anchor_0":{"x":-23,"y":599}},"tenSogdIni":{"anchor_0":{"x":-23,"y":600}},"twentySogdFin":{"anchor_0":{"x":309,"y":699}},"twentySogdMed":{"anchor_0":{"x":97,"y":699}},"twentySogdIni":{"anchor_0":{"x":97,"y":699}},"hundredSogdFin":{"anchor_0":{"x":874,"y":442}},"LamedhSep.hook":{"anchor_0":{"x":122,"y":774}},"LamedhFin.hook":{"anchor_0":{"x":119,"y":775}},"LamedhMed.hook":{"anchor_0":{"x":-83,"y":775}},"LamedhIni.hook":{"anchor_0":{"x":-85,"y":774}},"ZayinFin.alt02":{"anchor_0":{"x":505,"y":442}},"HethFin.alt03":{"anchor_0":{"x":589,"y":442}},"KaphFin.alt04":{"anchor_0":{"x":488,"y":442}},"NunFin.alt05":{"anchor_0":{"x":505,"y":442}},"NunFin.alt06":{"anchor_0":{"x":243,"y":442}},"SadheFin.alt07":{"anchor_0":{"x":573,"y":442}},"SadheFin.alt08":{"anchor_0":{"x":287,"y":442}},"SadheFin.alt09":{"anchor_0":{"x":572,"y":442}},"SadheFin.alt10":{"anchor_0":{"x":302,"y":487}},"SadheFin.alt11":{"anchor_0":{"x":483,"y":442}},"TawFin.alt12":{"anchor_0":{"x":579,"y":360}},"TawFin.alt13":{"anchor_0":{"x":352,"y":449}},"TawFin.alt14":{"anchor_0":{"x":555,"y":449}},"TawFin.alt15":{"anchor_0":{"x":663,"y":458}},"LamedhMed.wide":{"anchor_0":{"x":-7,"y":756}},"LamedhIni.wide":{"anchor_0":{"x":38,"y":755}},"LamedhMed.hookwide":{"anchor_0":{"x":-38,"y":776}},"LamedhIni.hookwide":{"anchor_0":{"x":-40,"y":775}},"LamedhMed.pewide":{"anchor_0":{"x":38,"y":755}},"KaphIni.ligaM":{"anchor_0":{"x":236,"y":442}},"KaphMed.ligaM":{"anchor_0":{"x":237,"y":442}},"PeIni.ligaM":{"anchor_0":{"x":264,"y":472}},"PeMed.ligaM":{"anchor_0":{"x":264,"y":472}},"KaphIni.ligaF":{"anchor_0":{"x":238,"y":442}},"KaphMed.ligaF":{"anchor_0":{"x":238,"y":442}},"PeIni.ligaF":{"anchor_0":{"x":264,"y":470}},"PeMed.ligaF":{"anchor_0":{"x":265,"y":472}},"WawFin.liga":{"anchor_0":{"x":403,"y":471}},"WawMed.liga":{"anchor_0":{"x":266,"y":473}},"AlephMed.pe":{"anchor_0":{"x":210,"y":441}},"BethMed.pe":{"anchor_0":{"x":225,"y":442}},"GimelMed.pe":{"anchor_0":{"x":278,"y":442}},"ZayinMed.pe":{"anchor_0":{"x":186,"y":443}},"HethMed.pe":{"anchor_0":{"x":279,"y":443}},"YodhMed.pe":{"anchor_0":{"x":139,"y":502}},"KaphMed.pe":{"anchor_0":{"x":237,"y":442}},"LamedhMed.pe":{"anchor_0":{"x":-52,"y":755}},"LamedhMed.pehook":{"anchor_0":{"x":-85,"y":775}},"LamedhMed.pehookwide":{"anchor_0":{"x":-40,"y":775}},"MemMed.pe":{"anchor_0":{"x":159,"y":400}},"NunMed.pe":{"anchor_0":{"x":191,"y":443}},"SamekhMed.pe":{"anchor_0":{"x":287,"y":443}},"PeMed.pe":{"anchor_0":{"x":264,"y":474}},"SadheMed.pe":{"anchor_0":{"x":264,"y":443}},"SadheMed.pe2":{"anchor_0":{"x":265,"y":442}},"ReshMed.pe":{"anchor_0":{"x":224,"y":443}},"ShinMed.pe":{"anchor_0":{"x":415,"y":397}},"TawMed.pe":{"anchor_0":{"x":290,"y":361}},"FethMed.pe":{"anchor_0":{"x":304,"y":443}},"LeshMed.pe":{"anchor_0":{"x":220,"y":442}},"AlephFin.pe":{"anchor_0":{"x":515,"y":441}},"BethFin.pe":{"anchor_0":{"x":459,"y":442}},"GimelFin.pe":{"anchor_0":{"x":391,"y":442}},"HeFin.pe":{"anchor_0":{"x":517,"y":442}},"ZayinFin.pe":{"anchor_0":{"x":203,"y":442}},"HethFin.pe":{"anchor_0":{"x":518,"y":442}},"YodhFin.pe":{"anchor_0":{"x":249,"y":502}},"KaphFin.pe":{"anchor_0":{"x":475,"y":442}},"LamedhFin.pe":{"anchor_0":{"x":150,"y":754}},"LamedhFin.pehook":{"anchor_0":{"x":122,"y":775}},"MemFin.pe":{"anchor_0":{"x":268,"y":465}},"NunFin.pe":{"anchor_0":{"x":406,"y":442}},"SamekhFin.pe":{"anchor_0":{"x":389,"y":443}},"AyinFin.pe":{"anchor_0":{"x":463,"y":622}},"PeFin.pe":{"anchor_0":{"x":521,"y":473}},"SadheFin.pe":{"anchor_0":{"x":482,"y":442}},"ReshFin.pe":{"anchor_0":{"x":252,"y":444}},"ShinFin.pe":{"anchor_0":{"x":496,"y":402}},"TawFin.pe":{"anchor_0":{"x":508,"y":360}},"FethFin.pe":{"anchor_0":{"x":549,"y":443}},"LeshFin.pe":{"anchor_0":{"x":243,"y":442}},"KaphIni.short":{"anchor_0":{"x":238,"y":442}},"KaphMed.short":{"anchor_0":{"x":228,"y":442}},"PeIni.short":{"anchor_0":{"x":257,"y":472}},"PeMed.short":{"anchor_0":{"x":255,"y":472}},"KaphIni.cut1":{"anchor_0":{"x":238,"y":442}},"KaphMed.cut1":{"anchor_0":{"x":218,"y":442}},"PeIni.cut1":{"anchor_0":{"x":264,"y":472}},"PeMed.cut1":{"anchor_0":{"x":265,"y":472}},"KaphIni.cut2":{"anchor_0":{"x":238,"y":442}},"KaphMed.cut2":{"anchor_0":{"x":238,"y":442}},"PeIni.cut2":{"anchor_0":{"x":264,"y":472}},"PeMed.cut2":{"anchor_0":{"x":264,"y":472}},"KaphIni.cut3":{"anchor_0":{"x":236,"y":442}},"KaphMed.cut3":{"anchor_0":{"x":238,"y":442}},"PeIni.cut3":{"anchor_0":{"x":244,"y":472}},"PeMed.cut3":{"anchor_0":{"x":244,"y":472}},"AlephFin.EE":{"anchor_0":{"x":515,"y":441}},"BethFin.BB":{"anchor_0":{"x":459,"y":442}},"GimelFin.BB":{"anchor_0":{"x":391,"y":443}},"HeFin.EE":{"anchor_0":{"x":517,"y":443}},"WawFin.DD":{"anchor_0":{"x":279,"y":472}},"HethFin.BB":{"anchor_0":{"x":519,"y":442}},"YodhFin.BB":{"anchor_0":{"x":263,"y":493}},"KaphFin.EE":{"anchor_0":{"x":456,"y":442}},"MemFin.BB":{"anchor_0":{"x":267,"y":467}},"SamekhFin.BB":{"anchor_0":{"x":392,"y":443}},"AyinFin.BB":{"anchor_0":{"x":462,"y":624}},"PeFin.DD":{"anchor_0":{"x":523,"y":472}},"SadheFin.BB":{"anchor_0":{"x":480,"y":444}},"ReshFin.EE":{"anchor_0":{"x":246,"y":442}},"ShinFin.DD":{"anchor_0":{"x":497,"y":402}},"TawFin.CC":{"anchor_0":{"x":509,"y":364}},"FethFin.BB":{"anchor_0":{"x":550,"y":444}},"LeshFin.EE":{"anchor_0":{"x":243,"y":443}},"HethFin.alt03BB":{"anchor_0":{"x":589,"y":442}},"KaphFin.alt04EE":{"anchor_0":{"x":488,"y":442}},"NunFin.alt06BB":{"anchor_0":{"x":243,"y":442}},"SadheFin.alt07BB":{"anchor_0":{"x":573,"y":442}},"SadheFin.alt08BB":{"anchor_0":{"x":287,"y":442}},"SadheFin.alt09FF":{"anchor_0":{"x":572,"y":442}},"SadheFin.alt10FF":{"anchor_0":{"x":302,"y":487}},"SadheFin.alt11FF":{"anchor_0":{"x":483,"y":442}},"TawFin.alt12CC":{"anchor_0":{"x":579,"y":360}},"TawFin.alt13FF":{"anchor_0":{"x":352,"y":449}},"TawFin.alt14FF":{"anchor_0":{"x":555,"y":449}},"TawFin.alt15FF":{"anchor_0":{"x":663,"y":458}},"AlephMed.EE":{"anchor_0":{"x":210,"y":441}},"BethMed.BB":{"anchor_0":{"x":224,"y":442}},"GimelMed.BB":{"anchor_0":{"x":280,"y":442}},"WawMed.FF":{"anchor_0":{"x":280,"y":472}},"HethMed.BB":{"anchor_0":{"x":278,"y":443}},"YodhMed.BB":{"anchor_0":{"x":149,"y":498}},"KaphMed.EE":{"anchor_0":{"x":218,"y":442}},"MemMed.EE":{"anchor_0":{"x":160,"y":401}},"SamekhMed.BB":{"anchor_0":{"x":288,"y":442}},"PeMed.DD":{"anchor_0":{"x":263,"y":473}},"SadheMed.FF":{"anchor_0":{"x":264,"y":443}},"ReshMed.EE":{"anchor_0":{"x":225,"y":442}},"ShinMed.DD":{"anchor_0":{"x":481,"y":403}},"TawMed.CC":{"anchor_0":{"x":290,"y":361}},"FethMed.BB":{"anchor_0":{"x":303,"y":444}},"LeshMed.EE":{"anchor_0":{"x":230,"y":443}},"KaphMed.ligaMEE":{"anchor_0":{"x":237,"y":442}},"PeMed.ligaMDD":{"anchor_0":{"x":264,"y":472}},"KaphMed.ligaFEE":{"anchor_0":{"x":238,"y":442}},"PeMed.ligaFDD":{"anchor_0":{"x":265,"y":472}},"KaphMed.shortEE":{"anchor_0":{"x":228,"y":442}},"PeMed.shortDD":{"anchor_0":{"x":255,"y":472}},"KaphMed.cut1EE":{"anchor_0":{"x":218,"y":442}},"PeMed.cut1DD":{"anchor_0":{"x":265,"y":472}},"KaphMed.cut2EE":{"anchor_0":{"x":238,"y":442}},"PeMed.cut2DD":{"anchor_0":{"x":264,"y":472}},"KaphMed.cut3EE":{"anchor_0":{"x":238,"y":442}},"PeMed.cut3DD":{"anchor_0":{"x":244,"y":472}},"ShinIni.Cx":{"anchor_0":{"x":362,"y":397}},"ShinIni.Dx":{"anchor_0":{"x":417,"y":397}},"ShinIni.Ex":{"anchor_0":{"x":479,"y":397}},"ShinIni.Fx":{"anchor_0":{"x":552,"y":397}},"ShinMed.peCx":{"anchor_0":{"x":361,"y":397}},"ShinMed.peDx":{"anchor_0":{"x":417,"y":397}},"ShinMed.peEx":{"anchor_0":{"x":479,"y":397}},"ShinMed.peFx":{"anchor_0":{"x":552,"y":397}},"ShinMed.Cx":{"anchor_0":{"x":427,"y":403}},"ShinMed.Dx":{"anchor_0":{"x":483,"y":403}},"ShinMed.Ex":{"anchor_0":{"x":541,"y":403}},"ShinMed.Fx":{"anchor_0":{"x":618,"y":403}},"KaphMed.peligaM":{"anchor_0":{"x":236,"y":442}},"KaphMed.peligaF":{"anchor_0":{"x":238,"y":442}},"KaphMed.peshort":{"anchor_0":{"x":238,"y":442}},"KaphMed.pecut1":{"anchor_0":{"x":238,"y":442}},"KaphMed.pecut2":{"anchor_0":{"x":238,"y":442}},"KaphMed.pecut3":{"anchor_0":{"x":236,"y":442}},"PeMed.peligaM":{"anchor_0":{"x":264,"y":472}},"PeMed.peligaF":{"anchor_0":{"x":264,"y":470}},"PeMed.peshort":{"anchor_0":{"x":257,"y":472}},"PeMed.pecut1":{"anchor_0":{"x":264,"y":472}},"PeMed.pecut2":{"anchor_0":{"x":264,"y":472}},"PeMed.pecut3":{"anchor_0":{"x":244,"y":472}},"ShinMed.DDCx":{"anchor_0":{"x":427,"y":403}},"ShinMed.DDDx":{"anchor_0":{"x":483,"y":403}},"ShinMed.DDEx":{"anchor_0":{"x":541,"y":403}},"ShinMed.DDFx":{"anchor_0":{"x":618,"y":403}},"TawMed.XS":{"anchor_0":{"x":290,"y":361}},"TawFin.XS":{"anchor_0":{"x":509,"y":364}},"TawFin.alt12XS":{"anchor_0":{"x":579,"y":360}},"MemIni.L":{"anchor_0":{"x":244,"y":400}},"MemMed.L":{"anchor_0":{"x":245,"y":401}},"MemMed.peL":{"anchor_0":{"x":244,"y":400}},"MemMed.EEL":{"anchor_0":{"x":245,"y":401}},"MemIni.S":{"anchor_0":{"x":124,"y":400}},"MemMed.S":{"anchor_0":{"x":125,"y":401}},"MemMed.peS":{"anchor_0":{"x":124,"y":400}},"MemMed.EES":{"anchor_0":{"x":125,"y":401}},"SadheMed.R2":{"anchor_0":{"x":264,"y":443}},"SadheMed.R3":{"anchor_0":{"x":264,"y":443}},"SadheMed.R4":{"anchor_0":{"x":264,"y":443}},"SadheFin.alt09R2":{"anchor_0":{"x":572,"y":442}},"SadheFin.alt10R2":{"anchor_0":{"x":302,"y":487}},"SadheFin.alt11R2":{"anchor_0":{"x":483,"y":442}},"SadheFin.alt09R3":{"anchor_0":{"x":572,"y":442}},"SadheFin.alt10R3":{"anchor_0":{"x":302,"y":487}},"SadheFin.alt11R3":{"anchor_0":{"x":483,"y":442}},"SadheFin.alt09R4":{"anchor_0":{"x":572,"y":442}},"SadheFin.alt10R4":{"anchor_0":{"x":302,"y":487}},"SadheFin.alt11R4":{"anchor_0":{"x":483,"y":442}},"MemIni.Dx":{"anchor_0":{"x":149,"y":400}},"MemMed.Dx":{"anchor_0":{"x":150,"y":401}},"MemMed.peDx":{"anchor_0":{"x":149,"y":400}},"MemMed.EEDx":{"anchor_0":{"x":150,"y":401}},"AlephMed.L":{"anchor_0":{"x":240,"y":441}},"AlephMed.peL":{"anchor_0":{"x":240,"y":441}},"AlephMed.EEL":{"anchor_0":{"x":240,"y":441}},"AlephIni.L":{"anchor_0":{"x":240,"y":441}},"KaphFin.alt04pe":{"anchor_0":{"x":497,"y":443}}}}]],"3":[null,[{"type":"mark_to_base","marks":{"anchor_0":{"dotbelowSogd":{"x":0,"y":0},"twodotsbelowSogd":{"x":0,"y":0},"curvebelowSogd":{"x":0,"y":0},"hookbelowSogd":{"x":0,"y":0},"longhookbelowSogd":{"x":0,"y":0},"reshbelowSogd":{"x":0,"y":0},"dotbelowSogd.rho":{"x":0,"y":0},"twodotsbelowSogd.rho":{"x":0,"y":0}}},"bases":{"uni25CC":{"anchor_0":{"x":300,"y":-60}}}}]],"4":[null,[{"type":"mark_to_base","marks":{"anchor_0":{"strokebelowSogd":{"x":0,"y":0},"strokebelowSogd.2":{"x":0,"y":0},"strokebelowSogd.3":{"x":0,"y":0},"strokebelowSogd.4":{"x":0,"y":0},"strokebelowSogd.5":{"x":0,"y":0},"strokebelowSogd.6":{"x":0,"y":0},"strokebelowSogd.7":{"x":0,"y":0}}},"bases":{"uni25CC":{"anchor_0":{"x":282,"y":-60}}}}]],"5":[null,[{"type":"mark_to_base","marks":{"anchor_0":{"dotaboveSogd":{"x":0,"y":542},"twodotsaboveSogd":{"x":0,"y":542},"curveaboveSogd":{"x":0,"y":542},"hookaboveSogd":{"x":0,"y":542},"hookaboveSogd.alt":{"x":0,"y":542},"dotaboveSogd.rho":{"x":0,"y":542},"twodotsaboveSogd.rho":{"x":0,"y":542}}},"bases":{"uni25CC":{"anchor_0":{"x":300,"y":645}}}}]]}},"GSUB":{"lookup_list":{"1":{"0":{"AlephSep":{"0":["AlephFin","AlephIni"],"2":["AlephIni","AlephFin"]},"BethSep":{"0":["BethFin","BethIni"],"2":["BethIni","BethFin"]},"GimelSep":{"0":["GimelFin","GimelIni"],"2":["GimelIni","GimelFin"]},"WawSep":{"0":["WawFin","WawIni"],"2":["WawIni","WawFin"]},"ZayinSep":{"0":["ZayinFin","ZayinIni"],"2":["ZayinIni","ZayinFin"]},"HethSep":{"0":["HethFin","HethIni"],"2":["HethIni","HethFin"]},"YodhSep":{"0":["YodhFin","YodhIni"],"2":["YodhIni","YodhFin"]},"KaphSep":{"0":["KaphFin","KaphIni"],"2":["KaphIni","KaphFin"]},"LamedhSep":{"0":["LamedhFin","LamedhIni"],"2":["LamedhIni","LamedhFin"]},"MemSep":{"0":["MemFin","MemIni"],"2":["MemIni","MemFin"]},"NunSep":{"0":["NunFin","NunIni"],"2":["NunIni","NunFin"]},"SamekhSep":{"0":["SamekhFin","SamekhIni"],"2":["SamekhIni","SamekhFin"]},"AyinSep":{"0":["AyinFin","AyinIni"],"2":["AyinIni","AyinFin"]},"PeSep":{"0":["PeFin","PeIni"],"2":["PeIni","PeFin"]},"ReshSep":{"0":["ReshFin","ReshIni"],"2":["ReshIni","ReshFin"]},"ShinSep":{"0":["ShinFin","ShinIni"],"2":["ShinIni","ShinFin"]},"TawSep":{"0":["TawFin","TawIni"],"2":["TawIni","TawFin"]},"FethSep":{"0":["FethFin","FethIni"],"2":["FethIni","FethFin"]},"LeshSep":{"0":["LeshFin","LeshIni"],"2":["LeshIni","LeshFin"]},"oneSogdSep":{"0":["oneSogdFin","oneSogdIni"],"2":["oneSogdIni","oneSogdFin"]},"tenSogdSep":{"0":["tenSogdFin","tenSogdIni"],"2":["tenSogdIni","tenSogdFin"]},"twentySogdSep":{"0":["twentySogdFin","twentySogdIni"],"2":["twentySogdIni","twentySogdFin"]}}},"8":{"0":{"rules":{"0":["LamedhMed.hook' lookup lookup_7 [dotaboveSogd twodotsaboveSogd curveaboveSogd hookaboveSogd dotaboveSogd.rho twodotsaboveSogd.rho] [ZayinFin ZayinMed YodhFin YodhMed NunFin NunMed] [dotaboveSogd twodotsaboveSogd curveaboveSogd hookaboveSogd dotaboveSogd.rho twodotsaboveSogd.rho]","LamedhIni' lookup lookup_7 [dotaboveSogd twodotsaboveSogd curveaboveSogd hookaboveSogd dotaboveSogd.rho twodotsaboveSogd.rho] [ZayinFin ZayinMed YodhFin YodhMed NunFin NunMed] [dotaboveSogd twodotsaboveSogd curveaboveSogd hookaboveSogd dotaboveSogd.rho twodotsaboveSogd.rho]"],"1":["LamedhMed.hook' lookup lookup_7 [ZayinFin ZayinMed YodhFin YodhMed NunFin NunMed] [dotaboveSogd twodotsaboveSogd curveaboveSogd hookaboveSogd dotaboveSogd.rho twodotsaboveSogd.rho]","LamedhIni' lookup lookup_7 [ZayinFin ZayinMed YodhFin YodhMed NunFin NunMed] [dotaboveSogd twodotsaboveSogd curveaboveSogd hookaboveSogd dotaboveSogd.rho twodotsaboveSogd.rho]"],"2":["LamedhMed' lookup lookup_7 [dotaboveSogd twodotsaboveSogd curveaboveSogd hookaboveSogd dotaboveSogd.rho twodotsaboveSogd.rho] [ZayinFin ZayinMed YodhFin YodhMed NunFin NunMed] [dotaboveSogd twodotsaboveSogd curveaboveSogd hookaboveSogd dotaboveSogd.rho twodotsaboveSogd.rho]","LamedhIni.hook' lookup lookup_7 [dotaboveSogd twodotsaboveSogd curveaboveSogd hookaboveSogd dotaboveSogd.rho twodotsaboveSogd.rho] [ZayinFin ZayinMed YodhFin YodhMed NunFin NunMed] [dotaboveSogd twodotsaboveSogd curveaboveSogd hookaboveSogd dotaboveSogd.rho twodotsaboveSogd.rho]"],"3":["LamedhMed' lookup lookup_7 [ZayinFin ZayinMed YodhFin YodhMed NunFin NunMed] [dotaboveSogd twodotsaboveSogd curveaboveSogd hookaboveSogd dotaboveSogd.rho twodotsaboveSogd.rho]","LamedhIni.hook' lookup lookup_7 [ZayinFin ZayinMed YodhFin YodhMed NunFin NunMed] [dotaboveSogd twodotsaboveSogd curveaboveSogd hookaboveSogd dotaboveSogd.rho twodotsaboveSogd.rho]"],"4":["LamedhIni.hook' lookup lookup_7 [dotaboveSogd twodotsaboveSogd curveaboveSogd hookaboveSogd dotaboveSogd.rho twodotsaboveSogd.rho] [ZayinFin ZayinMed YodhFin YodhMed NunFin NunMed] [dotaboveSogd twodotsaboveSogd curveaboveSogd hookaboveSogd dotaboveSogd.rho twodotsaboveSogd.rho]","LamedhMed' lookup lookup_7 [dotaboveSogd twodotsaboveSogd curveaboveSogd hookaboveSogd dotaboveSogd.rho twodotsaboveSogd.rho] [ZayinFin ZayinMed YodhFin YodhMed NunFin NunMed] [dotaboveSogd twodotsaboveSogd curveaboveSogd hookaboveSogd dotaboveSogd.rho twodotsaboveSogd.rho]"],"5":["LamedhIni.hook' lookup lookup_7 [ZayinFin ZayinMed YodhFin YodhMed NunFin NunMed] [dotaboveSogd twodotsaboveSogd curveaboveSogd hookaboveSogd dotaboveSogd.rho twodotsaboveSogd.rho]","LamedhMed' lookup lookup_7 [ZayinFin ZayinMed YodhFin YodhMed NunFin NunMed] [dotaboveSogd twodotsaboveSogd curveaboveSogd hookaboveSogd dotaboveSogd.rho twodotsaboveSogd.rho]"],"6":["LamedhIni' lookup lookup_7 [dotaboveSogd twodotsaboveSogd curveaboveSogd hookaboveSogd dotaboveSogd.rho twodotsaboveSogd.rho] [ZayinFin ZayinMed YodhFin YodhMed NunFin NunMed] [dotaboveSogd twodotsaboveSogd curveaboveSogd hookaboveSogd dotaboveSogd.rho twodotsaboveSogd.rho]","LamedhMed.hook' lookup lookup_7 [dotaboveSogd twodotsaboveSogd curveaboveSogd hookaboveSogd dotaboveSogd.rho twodotsaboveSogd.rho] [ZayinFin ZayinMed YodhFin YodhMed NunFin NunMed] [dotaboveSogd twodotsaboveSogd curveaboveSogd hookaboveSogd dotaboveSogd.rho twodotsaboveSogd.rho]"],"7":["LamedhIni' lookup lookup_7 [ZayinFin ZayinMed YodhFin YodhMed NunFin NunMed] [dotaboveSogd twodotsaboveSogd curveaboveSogd hookaboveSogd dotaboveSogd.rho twodotsaboveSogd.rho]","LamedhMed.hook' lookup lookup_7 [ZayinFin ZayinMed YodhFin YodhMed NunFin NunMed] [dotaboveSogd twodotsaboveSogd curveaboveSogd hookaboveSogd dotaboveSogd.rho twodotsaboveSogd.rho]"]}}},"23":{"0":{"rules":{"0":["[KaphMed KaphIni PeMed PeIni KaphMed.pe PeMed.pe KaphIni.short KaphMed.short PeIni.short PeMed.short KaphIni.cut1 KaphMed.cut1 PeIni.cut1 PeMed.cut1 KaphIni.cut2 KaphMed.cut2 PeIni.cut2 PeMed.cut2 KaphIni.cut3 KaphMed.cut3 PeIni.cut3 PeMed.cut3 KaphMed.peshort KaphMed.pecut2 KaphMed.pecut3 PeMed.peshort PeMed.pecut2 PeMed.pecut3] ZayinMed' lookup lookup_9","[KaphMed KaphIni PeMed PeIni KaphMed.pe PeMed.pe KaphIni.short KaphMed.short PeIni.short PeMed.short KaphIni.cut1 KaphMed.cut1 PeIni.cut1 PeMed.cut1 KaphIni.cut2 KaphMed.cut2 PeIni.cut2 PeMed.cut2 KaphIni.cut3 KaphMed.cut3 PeIni.cut3 PeMed.cut3 KaphMed.peshort KaphMed.pecut2 KaphMed.pecut3 PeMed.peshort PeMed.pecut2 PeMed.pecut3] AlephFin' lookup lookup_9"],"1":["[KaphMed KaphIni PeMed PeIni KaphMed.pe PeMed.pe KaphIni.short KaphMed.short PeIni.short PeMed.short KaphIni.cut1 KaphMed.cut1 PeIni.cut1 PeMed.cut1 KaphIni.cut2 KaphMed.cut2 PeIni.cut2 PeMed.cut2 KaphIni.cut3 KaphMed.cut3 PeIni.cut3 PeMed.cut3 KaphMed.peshort KaphMed.pecut2 KaphMed.pecut3 PeMed.peshort PeMed.pecut2 PeMed.pecut3] ZayinFin' lookup lookup_9","[KaphMed KaphIni PeMed PeIni KaphMed.pe PeMed.pe KaphIni.short KaphMed.short PeIni.short PeMed.short KaphIni.cut1 KaphMed.cut1 PeIni.cut1 PeMed.cut1 KaphIni.cut2 KaphMed.cut2 PeIni.cut2 PeMed.cut2 KaphIni.cut3 KaphMed.cut3 PeIni.cut3 PeMed.cut3 KaphMed.peshort KaphMed.pecut2 KaphMed.pecut3 PeMed.peshort PeMed.pecut2 PeMed.pecut3] AlephMed' lookup lookup_9"],"2":["[KaphMed KaphIni PeMed PeIni KaphMed.pe PeMed.pe KaphIni.short KaphMed.short PeIni.short PeMed.short KaphIni.cut1 KaphMed.cut1 PeIni.cut1 PeMed.cut1 KaphIni.cut2 KaphMed.cut2 PeIni.cut2 PeMed.cut2 KaphIni.cut3 KaphMed.cut3 PeIni.cut3 PeMed.cut3 KaphMed.peshort KaphMed.pecut2 KaphMed.pecut3 PeMed.peshort PeMed.pecut2 PeMed.pecut3] YodhMed' lookup lookup_9","[KaphMed KaphIni PeMed PeIni KaphMed.pe PeMed.pe KaphIni.short KaphMed.short PeIni.short PeMed.short KaphIni.cut1 KaphMed.cut1 PeIni.cut1 PeMed.cut1 KaphIni.cut2 KaphMed.cut2 PeIni.cut2 PeMed.cut2 KaphIni.cut3 KaphMed.cut3 PeIni.cut3 PeMed.cut3 KaphMed.peshort KaphMed.pecut2 KaphMed.pecut3 PeMed.peshort PeMed.pecut2 PeMed.pecut3] AyinFin' lookup lookup_9"],"3":["[KaphMed KaphIni PeMed PeIni KaphMed.pe PeMed.pe KaphIni.short KaphMed.short PeIni.short PeMed.short KaphIni.cut1 KaphMed.cut1 PeIni.cut1 PeMed.cut1 KaphIni.cut2 KaphMed.cut2 PeIni.cut2 PeMed.cut2 KaphIni.cut3 KaphMed.cut3 PeIni.cut3 PeMed.cut3 KaphMed.peshort KaphMed.pecut2 KaphMed.pecut3 PeMed.peshort PeMed.pecut2 PeMed.pecut3] YodhFin' lookup lookup_9","[KaphMed KaphIni PeMed PeIni KaphMed.pe PeMed.pe KaphIni.short KaphMed.short PeIni.short PeMed.short KaphIni.cut1 KaphMed.cut1 PeIni.cut1 PeMed.cut1 KaphIni.cut2 KaphMed.cut2 PeIni.cut2 PeMed.cut2 KaphIni.cut3 KaphMed.cut3 PeIni.cut3 PeMed.cut3 KaphMed.peshort KaphMed.pecut2 KaphMed.pecut3 PeMed.peshort PeMed.pecut2 PeMed.pecut3] BethFin' lookup lookup_9"],"4":["[KaphMed KaphIni PeMed PeIni KaphMed.pe PeMed.pe KaphIni.short KaphMed.short PeIni.short PeMed.short KaphIni.cut1 KaphMed.cut1 PeIni.cut1 PeMed.cut1 KaphIni.cut2 KaphMed.cut2 PeIni.cut2 PeMed.cut2 KaphIni.cut3 KaphMed.cut3 PeIni.cut3 PeMed.cut3 KaphMed.peshort KaphMed.pecut2 KaphMed.pecut3 PeMed.peshort PeMed.pecut2 PeMed.pecut3] TawMed' lookup lookup_9","[KaphMed KaphIni PeMed PeIni KaphMed.pe PeMed.pe KaphIni.short KaphMed.short PeIni.short PeMed.short KaphIni.cut1 KaphMed.cut1 PeIni.cut1 PeMed.cut1 KaphIni.cut2 KaphMed.cut2 PeIni.cut2 PeMed.cut2 KaphIni.cut3 KaphMed.cut3 PeIni.cut3 PeMed.cut3 KaphMed.peshort KaphMed.pecut2 KaphMed.pecut3 PeMed.peshort PeMed.pecut2 PeMed.pecut3] BethMed' lookup lookup_9"],"5":["[KaphMed KaphIni PeMed PeIni KaphMed.pe PeMed.pe KaphIni.short KaphMed.short PeIni.short PeMed.short KaphIni.cut1 KaphMed.cut1 PeIni.cut1 PeMed.cut1 KaphIni.cut2 KaphMed.cut2 PeIni.cut2 PeMed.cut2 KaphIni.cut3 KaphMed.cut3 PeIni.cut3 PeMed.cut3 KaphMed.peshort KaphMed.pecut2 KaphMed.pecut3 PeMed.peshort PeMed.pecut2 PeMed.pecut3] TawFin' lookup lookup_9","[KaphMed KaphIni PeMed PeIni KaphMed.pe PeMed.pe KaphIni.short KaphMed.short PeIni.short PeMed.short KaphIni.cut1 KaphMed.cut1 PeIni.cut1 PeMed.cut1 KaphIni.cut2 KaphMed.cut2 PeIni.cut2 PeMed.cut2 KaphIni.cut3 KaphMed.cut3 PeIni.cut3 PeMed.cut3 KaphMed.peshort KaphMed.pecut2 KaphMed.pecut3 PeMed.peshort PeMed.pecut2 PeMed.pecut3] FethFin' lookup lookup_9"],"6":["[KaphMed KaphIni PeMed PeIni KaphMed.pe PeMed.pe KaphIni.short KaphMed.short PeIni.short PeMed.short KaphIni.cut1 KaphMed.cut1 PeIni.cut1 PeMed.cut1 KaphIni.cut2 KaphMed.cut2 PeIni.cut2 PeMed.cut2 KaphIni.cut3 KaphMed.cut3 PeIni.cut3 PeMed.cut3 KaphMed.peshort KaphMed.pecut2 KaphMed.pecut3 PeMed.peshort PeMed.pecut2 PeMed.pecut3] ShinMed' lookup lookup_9","[KaphMed KaphIni PeMed PeIni KaphMed.pe PeMed.pe KaphIni.short KaphMed.short PeIni.short PeMed.short KaphIni.cut1 KaphMed.cut1 PeIni.cut1 PeMed.cut1 KaphIni.cut2 KaphMed.cut2 PeIni.cut2 PeMed.cut2 KaphIni.cut3 KaphMed.cut3 PeIni.cut3 PeMed.cut3 KaphMed.peshort KaphMed.pecut2 KaphMed.pecut3 PeMed.peshort PeMed.pecut2 PeMed.pecut3] FethMed' lookup lookup_9"],"7":["[KaphMed KaphIni PeMed PeIni KaphMed.pe PeMed.pe KaphIni.short KaphMed.short PeIni.short PeMed.short KaphIni.cut1 KaphMed.cut1 PeIni.cut1 PeMed.cut1 KaphIni.cut2 KaphMed.cut2 PeIni.cut2 PeMed.cut2 KaphIni.cut3 KaphMed.cut3 PeIni.cut3 PeMed.cut3 KaphMed.peshort KaphMed.pecut2 KaphMed.pecut3 PeMed.peshort PeMed.pecut2 PeMed.pecut3] ShinFin' lookup lookup_9","[KaphMed KaphIni PeMed PeIni KaphMed.pe PeMed.pe KaphIni.short KaphMed.short PeIni.short PeMed.short KaphIni.cut1 KaphMed.cut1 PeIni.cut1 PeMed.cut1 KaphIni.cut2 KaphMed.cut2 PeIni.cut2 PeMed.cut2 KaphIni.cut3 KaphMed.cut3 PeIni.cut3 PeMed.cut3 KaphMed.peshort KaphMed.pecut2 KaphMed.pecut3 PeMed.peshort PeMed.pecut2 PeMed.pecut3] GimelFin' lookup lookup_9"],"8":["[KaphMed KaphIni PeMed PeIni KaphMed.pe PeMed.pe KaphIni.short KaphMed.short PeIni.short PeMed.short KaphIni.cut1 KaphMed.cut1 PeIni.cut1 PeMed.cut1 KaphIni.cut2 KaphMed.cut2 PeIni.cut2 PeMed.cut2 KaphIni.cut3 KaphMed.cut3 PeIni.cut3 PeMed.cut3 KaphMed.peshort KaphMed.pecut2 KaphMed.pecut3 PeMed.peshort PeMed.pecut2 PeMed.pecut3] SamekhMed' lookup lookup_9","[KaphMed KaphIni PeMed PeIni KaphMed.pe PeMed.pe KaphIni.short KaphMed.short PeIni.short PeMed.short KaphIni.cut1 KaphMed.cut1 PeIni.cut1 PeMed.cut1 KaphIni.cut2 KaphMed.cut2 PeIni.cut2 PeMed.cut2 KaphIni.cut3 KaphMed.cut3 PeIni.cut3 PeMed.cut3 KaphMed.peshort KaphMed.pecut2 KaphMed.pecut3 PeMed.peshort PeMed.pecut2 PeMed.pecut3] GimelMed' lookup lookup_9"],"9":["[KaphMed KaphIni PeMed PeIni KaphMed.pe PeMed.pe KaphIni.short KaphMed.short PeIni.short PeMed.short KaphIni.cut1 KaphMed.cut1 PeIni.cut1 PeMed.cut1 KaphIni.cut2 KaphMed.cut2 PeIni.cut2 PeMed.cut2 KaphIni.cut3 KaphMed.cut3 PeIni.cut3 PeMed.cut3 KaphMed.peshort KaphMed.pecut2 KaphMed.pecut3 PeMed.peshort PeMed.pecut2 PeMed.pecut3] SamekhFin' lookup lookup_9","[KaphMed KaphIni PeMed PeIni KaphMed.pe PeMed.pe KaphIni.short KaphMed.short PeIni.short PeMed.short KaphIni.cut1 KaphMed.cut1 PeIni.cut1 PeMed.cut1 KaphIni.cut2 KaphMed.cut2 PeIni.cut2 PeMed.cut2 KaphIni.cut3 KaphMed.cut3 PeIni.cut3 PeMed.cut3 KaphMed.peshort KaphMed.pecut2 KaphMed.pecut3 PeMed.peshort PeMed.pecut2 PeMed.pecut3] HeFin' lookup lookup_9"],"10":["[KaphMed KaphIni PeMed PeIni KaphMed.pe PeMed.pe KaphIni.short KaphMed.short PeIni.short PeMed.short KaphIni.cut1 KaphMed.cut1 PeIni.cut1 PeMed.cut1 KaphIni.cut2 KaphMed.cut2 PeIni.cut2 PeMed.cut2 KaphIni.cut3 KaphMed.cut3 PeIni.cut3 PeMed.cut3 KaphMed.peshort KaphMed.pecut2 KaphMed.pecut3 PeMed.peshort PeMed.pecut2 PeMed.pecut3] SadheFin' lookup lookup_9","[KaphMed KaphIni PeMed PeIni KaphMed.pe PeMed.pe KaphIni.short KaphMed.short PeIni.short PeMed.short KaphIni.cut1 KaphMed.cut1 PeIni.cut1 PeMed.cut1 KaphIni.cut2 KaphMed.cut2 PeIni.cut2 PeMed.cut2 KaphIni.cut3 KaphMed.cut3 PeIni.cut3 PeMed.cut3 KaphMed.peshort KaphMed.pecut2 KaphMed.pecut3 PeMed.peshort PeMed.pecut2 PeMed.pecut3] HethFin' lookup lookup_9"],"11":["[KaphMed KaphIni PeMed PeIni KaphMed.pe PeMed.pe KaphIni.short KaphMed.short PeIni.short PeMed.short KaphIni.cut1 KaphMed.cut1 PeIni.cut1 PeMed.cut1 KaphIni.cut2 KaphMed.cut2 PeIni.cut2 PeMed.cut2 KaphIni.cut3 KaphMed.cut3 PeIni.cut3 PeMed.cut3 KaphMed.peshort KaphMed.pecut2 KaphMed.pecut3 PeMed.peshort PeMed.pecut2 PeMed.pecut3] ReshMed' lookup lookup_9","[KaphMed KaphIni PeMed PeIni KaphMed.pe PeMed.pe KaphIni.short KaphMed.short PeIni.short PeMed.short KaphIni.cut1 KaphMed.cut1 PeIni.cut1 PeMed.cut1 KaphIni.cut2 KaphMed.cut2 PeIni.cut2 PeMed.cut2 KaphIni.cut3 KaphMed.cut3 PeIni.cut3 PeMed.cut3 KaphMed.peshort KaphMed.pecut2 KaphMed.pecut3 PeMed.peshort PeMed.pecut2 PeMed.pecut3] HethMed' lookup lookup_9"],"12":["[KaphMed KaphIni PeMed PeIni KaphMed.pe PeMed.pe KaphIni.short KaphMed.short PeIni.short PeMed.short KaphIni.cut1 KaphMed.cut1 PeIni.cut1 PeMed.cut1 KaphIni.cut2 KaphMed.cut2 PeIni.cut2 PeMed.cut2 KaphIni.cut3 KaphMed.cut3 PeIni.cut3 PeMed.cut3 KaphMed.peshort KaphMed.pecut2 KaphMed.pecut3 PeMed.peshort PeMed.pecut2 PeMed.pecut3] ReshFin' lookup lookup_9","[KaphMed KaphIni PeMed PeIni KaphMed.pe PeMed.pe KaphIni.short KaphMed.short PeIni.short PeMed.short KaphIni.cut1 KaphMed.cut1 PeIni.cut1 PeMed.cut1 KaphIni.cut2 KaphMed.cut2 PeIni.cut2 PeMed.cut2 KaphIni.cut3 KaphMed.cut3 PeIni.cut3 PeMed.cut3 KaphMed.peshort KaphMed.pecut2 KaphMed.pecut3 PeMed.peshort PeMed.pecut2 PeMed.pecut3] LamedhFin' lookup lookup_9"],"13":["[KaphMed KaphIni PeMed PeIni KaphMed.pe PeMed.pe KaphIni.short KaphMed.short PeIni.short PeMed.short KaphIni.cut1 KaphMed.cut1 PeIni.cut1 PeMed.cut1 KaphIni.cut2 KaphMed.cut2 PeIni.cut2 PeMed.cut2 KaphIni.cut3 KaphMed.cut3 PeIni.cut3 PeMed.cut3 KaphMed.peshort KaphMed.pecut2 KaphMed.pecut3 PeMed.peshort PeMed.pecut2 PeMed.pecut3] NunMed' lookup lookup_9","[KaphMed KaphIni PeMed PeIni KaphMed.pe PeMed.pe KaphIni.short KaphMed.short PeIni.short PeMed.short KaphIni.cut1 KaphMed.cut1 PeIni.cut1 PeMed.cut1 KaphIni.cut2 KaphMed.cut2 PeIni.cut2 PeMed.cut2 KaphIni.cut3 KaphMed.cut3 PeIni.cut3 PeMed.cut3 KaphMed.peshort KaphMed.pecut2 KaphMed.pecut3 PeMed.peshort PeMed.pecut2 PeMed.pecut3] LamedhFin.hook' lookup lookup_9"],"14":["[KaphMed KaphIni PeMed PeIni KaphMed.pe PeMed.pe KaphIni.short KaphMed.short PeIni.short PeMed.short KaphIni.cut1 KaphMed.cut1 PeIni.cut1 PeMed.cut1 KaphIni.cut2 KaphMed.cut2 PeIni.cut2 PeMed.cut2 KaphIni.cut3 KaphMed.cut3 PeIni.cut3 PeMed.cut3 KaphMed.peshort KaphMed.pecut2 KaphMed.pecut3 PeMed.peshort PeMed.pecut2 PeMed.pecut3] NunFin' lookup lookup_9","[KaphMed KaphIni PeMed PeIni KaphMed.pe PeMed.pe KaphIni.short KaphMed.short PeIni.short PeMed.short KaphIni.cut1 KaphMed.cut1 PeIni.cut1 PeMed.cut1 KaphIni.cut2 KaphMed.cut2 PeIni.cut2 PeMed.cut2 KaphIni.cut3 KaphMed.cut3 PeIni.cut3 PeMed.cut3 KaphMed.peshort KaphMed.pecut2 KaphMed.pecut3 PeMed.peshort PeMed.pecut2 PeMed.pecut3] LamedhMed' lookup lookup_9"],"15":["[KaphMed KaphIni PeMed PeIni KaphMed.pe PeMed.pe KaphIni.short KaphMed.short PeIni.short PeMed.short KaphIni.cut1 KaphMed.cut1 PeIni.cut1 PeMed.cut1 KaphIni.cut2 KaphMed.cut2 PeIni.cut2 PeMed.cut2 KaphIni.cut3 KaphMed.cut3 PeIni.cut3 PeMed.cut3 KaphMed.peshort KaphMed.pecut2 KaphMed.pecut3 PeMed.peshort PeMed.pecut2 PeMed.pecut3] MemMed' lookup lookup_9","[KaphMed KaphIni PeMed PeIni KaphMed.pe PeMed.pe KaphIni.short KaphMed.short PeIni.short PeMed.short KaphIni.cut1 KaphMed.cut1 PeIni.cut1 PeMed.cut1 KaphIni.cut2 KaphMed.cut2 PeIni.cut2 PeMed.cut2 KaphIni.cut3 KaphMed.cut3 PeIni.cut3 PeMed.cut3 KaphMed.peshort KaphMed.pecut2 KaphMed.pecut3 PeMed.peshort PeMed.pecut2 PeMed.pecut3] LamedhMed.hook' lookup lookup_9"],"16":["[KaphMed KaphIni PeMed PeIni KaphMed.pe PeMed.pe KaphIni.short KaphMed.short PeIni.short PeMed.short KaphIni.cut1 KaphMed.cut1 PeIni.cut1 PeMed.cut1 KaphIni.cut2 KaphMed.cut2 PeIni.cut2 PeMed.cut2 KaphIni.cut3 KaphMed.cut3 PeIni.cut3 PeMed.cut3 KaphMed.peshort KaphMed.pecut2 KaphMed.pecut3 PeMed.peshort PeMed.pecut2 PeMed.pecut3] MemFin' lookup lookup_9","[KaphMed KaphIni PeMed PeIni KaphMed.pe PeMed.pe KaphIni.short KaphMed.short PeIni.short PeMed.short KaphIni.cut1 KaphMed.cut1 PeIni.cut1 PeMed.cut1 KaphIni.cut2 KaphMed.cut2 PeIni.cut2 PeMed.cut2 KaphIni.cut3 KaphMed.cut3 PeIni.cut3 PeMed.cut3 KaphMed.peshort KaphMed.pecut2 KaphMed.pecut3 PeMed.peshort PeMed.pecut2 PeMed.pecut3] LamedhMed.hookwide' lookup lookup_9"],"17":["[KaphMed KaphIni PeMed PeIni KaphMed.pe PeMed.pe KaphIni.short KaphMed.short PeIni.short PeMed.short KaphIni.cut1 KaphMed.cut1 PeIni.cut1 PeMed.cut1 KaphIni.cut2 KaphMed.cut2 PeIni.cut2 PeMed.cut2 KaphIni.cut3 KaphMed.cut3 PeIni.cut3 PeMed.cut3 KaphMed.peshort KaphMed.pecut2 KaphMed.pecut3 PeMed.peshort PeMed.pecut2 PeMed.pecut3] LeshMed' lookup lookup_9","[KaphMed KaphIni PeMed PeIni KaphMed.pe PeMed.pe KaphIni.short KaphMed.short PeIni.short PeMed.short KaphIni.cut1 KaphMed.cut1 PeIni.cut1 PeMed.cut1 KaphIni.cut2 KaphMed.cut2 PeIni.cut2 PeMed.cut2 KaphIni.cut3 KaphMed.cut3 PeIni.cut3 PeMed.cut3 KaphMed.peshort KaphMed.pecut2 KaphMed.pecut3 PeMed.peshort PeMed.pecut2 PeMed.pecut3] LamedhMed.wide' lookup lookup_9"],"19":["[KaphMed KaphIni PeMed PeIni KaphMed.pe PeMed.pe KaphIni.short KaphMed.short PeIni.short PeMed.short KaphIni.cut1 KaphMed.cut1 PeIni.cut1 PeMed.cut1 KaphIni.cut2 KaphMed.cut2 PeIni.cut2 PeMed.cut2 KaphIni.cut3 KaphMed.cut3 PeIni.cut3 PeMed.cut3 KaphMed.peshort KaphMed.pecut2 KaphMed.pecut3 PeMed.peshort PeMed.pecut2 PeMed.pecut3] LamedhMed.wide' lookup lookup_9","[KaphMed KaphIni PeMed PeIni KaphMed.pe PeMed.pe KaphIni.short KaphMed.short PeIni.short PeMed.short KaphIni.cut1 KaphMed.cut1 PeIni.cut1 PeMed.cut1 KaphIni.cut2 KaphMed.cut2 PeIni.cut2 PeMed.cut2 KaphIni.cut3 KaphMed.cut3 PeIni.cut3 PeMed.cut3 KaphMed.peshort KaphMed.pecut2 KaphMed.pecut3 PeMed.peshort PeMed.pecut2 PeMed.pecut3] LeshMed' lookup lookup_9"],"20":["[KaphMed KaphIni PeMed PeIni KaphMed.pe PeMed.pe KaphIni.short KaphMed.short PeIni.short PeMed.short KaphIni.cut1 KaphMed.cut1 PeIni.cut1 PeMed.cut1 KaphIni.cut2 KaphMed.cut2 PeIni.cut2 PeMed.cut2 KaphIni.cut3 KaphMed.cut3 PeIni.cut3 PeMed.cut3 KaphMed.peshort KaphMed.pecut2 KaphMed.pecut3 PeMed.peshort PeMed.pecut2 PeMed.pecut3] LamedhMed.hookwide' lookup lookup_9","[KaphMed KaphIni PeMed PeIni KaphMed.pe PeMed.pe KaphIni.short KaphMed.short PeIni.short PeMed.short KaphIni.cut1 KaphMed.cut1 PeIni.cut1 PeMed.cut1 KaphIni.cut2 KaphMed.cut2 PeIni.cut2 PeMed.cut2 KaphIni.cut3 KaphMed.cut3 PeIni.cut3 PeMed.cut3 KaphMed.peshort KaphMed.pecut2 KaphMed.pecut3 PeMed.peshort PeMed.pecut2 PeMed.pecut3] MemFin' lookup lookup_9"],"21":["[KaphMed KaphIni PeMed PeIni KaphMed.pe PeMed.pe KaphIni.short KaphMed.short PeIni.short PeMed.short KaphIni.cut1 KaphMed.cut1 PeIni.cut1 PeMed.cut1 KaphIni.cut2 KaphMed.cut2 PeIni.cut2 PeMed.cut2 KaphIni.cut3 KaphMed.cut3 PeIni.cut3 PeMed.cut3 KaphMed.peshort KaphMed.pecut2 KaphMed.pecut3 PeMed.peshort PeMed.pecut2 PeMed.pecut3] LamedhMed.hook' lookup lookup_9","[KaphMed KaphIni PeMed PeIni KaphMed.pe PeMed.pe KaphIni.short KaphMed.short PeIni.short PeMed.short KaphIni.cut1 KaphMed.cut1 PeIni.cut1 PeMed.cut1 KaphIni.cut2 KaphMed.cut2 PeIni.cut2 PeMed.cut2 KaphIni.cut3 KaphMed.cut3 PeIni.cut3 PeMed.cut3 KaphMed.peshort KaphMed.pecut2 KaphMed.pecut3 PeMed.peshort PeMed.pecut2 PeMed.pecut3] MemMed' lookup lookup_9"],"22":["[KaphMed KaphIni PeMed PeIni KaphMed.pe PeMed.pe KaphIni.short KaphMed.short PeIni.short PeMed.short KaphIni.cut1 KaphMed.cut1 PeIni.cut1 PeMed.cut1 KaphIni.cut2 KaphMed.cut2 PeIni.cut2 PeMed.cut2 KaphIni.cut3 KaphMed.cut3 PeIni.cut3 PeMed.cut3 KaphMed.peshort KaphMed.pecut2 KaphMed.pecut3 PeMed.peshort PeMed.pecut2 PeMed.pecut3] LamedhMed' lookup lookup_9","[KaphMed KaphIni PeMed PeIni KaphMed.pe PeMed.pe KaphIni.short KaphMed.short PeIni.short PeMed.short KaphIni.cut1 KaphMed.cut1 PeIni.cut1 PeMed.cut1 KaphIni.cut2 KaphMed.cut2 PeIni.cut2 PeMed.cut2 KaphIni.cut3 KaphMed.cut3 PeIni.cut3 PeMed.cut3 KaphMed.peshort KaphMed.pecut2 KaphMed.pecut3 PeMed.peshort PeMed.pecut2 PeMed.pecut3] NunFin' lookup lookup_9"],"23":["[KaphMed KaphIni PeMed PeIni KaphMed.pe PeMed.pe KaphIni.short KaphMed.short PeIni.short PeMed.short KaphIni.cut1 KaphMed.cut1 PeIni.cut1 PeMed.cut1 KaphIni.cut2 KaphMed.cut2 PeIni.cut2 PeMed.cut2 KaphIni.cut3 KaphMed.cut3 PeIni.cut3 PeMed.cut3 KaphMed.peshort KaphMed.pecut2 KaphMed.pecut3 PeMed.peshort PeMed.pecut2 PeMed.pecut3] LamedhFin.hook' lookup lookup_9","[KaphMed KaphIni PeMed PeIni KaphMed.pe PeMed.pe KaphIni.short KaphMed.short PeIni.short PeMed.short KaphIni.cut1 KaphMed.cut1 PeIni.cut1 PeMed.cut1 KaphIni.cut2 KaphMed.cut2 PeIni.cut2 PeMed.cut2 KaphIni.cut3 KaphMed.cut3 PeIni.cut3 PeMed.cut3 KaphMed.peshort KaphMed.pecut2 KaphMed.pecut3 PeMed.peshort PeMed.pecut2 PeMed.pecut3] NunMed' lookup lookup_9"],"24":["[KaphMed KaphIni PeMed PeIni KaphMed.pe PeMed.pe KaphIni.short KaphMed.short PeIni.short PeMed.short KaphIni.cut1 KaphMed.cut1 PeIni.cut1 PeMed.cut1 KaphIni.cut2 KaphMed.cut2 PeIni.cut2 PeMed.cut2 KaphIni.cut3 KaphMed.cut3 PeIni.cut3 PeMed.cut3 KaphMed.peshort KaphMed.pecut2 KaphMed.pecut3 PeMed.peshort PeMed.pecut2 PeMed.pecut3] LamedhFin' lookup lookup_9","[KaphMed KaphIni PeMed PeIni KaphMed.pe PeMed.pe KaphIni.short KaphMed.short PeIni.short PeMed.short KaphIni.cut1 KaphMed.cut1 PeIni.cut1 PeMed.cut1 KaphIni.cut2 KaphMed.cut2 PeIni.cut2 PeMed.cut2 KaphIni.cut3 KaphMed.cut3 PeIni.cut3 PeMed.cut3 KaphMed.peshort KaphMed.pecut2 KaphMed.pecut3 PeMed.peshort PeMed.pecut2 PeMed.pecut3] ReshFin' lookup lookup_9"],"25":["[KaphMed KaphIni PeMed PeIni KaphMed.pe PeMed.pe KaphIni.short KaphMed.short PeIni.short PeMed.short KaphIni.cut1 KaphMed.cut1 PeIni.cut1 PeMed.cut1 KaphIni.cut2 KaphMed.cut2 PeIni.cut2 PeMed.cut2 KaphIni.cut3 KaphMed.cut3 PeIni.cut3 PeMed.cut3 KaphMed.peshort KaphMed.pecut2 KaphMed.pecut3 PeMed.peshort PeMed.pecut2 PeMed.pecut3] HethMed' lookup lookup_9","[KaphMed KaphIni PeMed PeIni KaphMed.pe PeMed.pe KaphIni.short KaphMed.short PeIni.short PeMed.short KaphIni.cut1 KaphMed.cut1 PeIni.cut1 PeMed.cut1 KaphIni.cut2 KaphMed.cut2 PeIni.cut2 PeMed.cut2 KaphIni.cut3 KaphMed.cut3 PeIni.cut3 PeMed.cut3 KaphMed.peshort KaphMed.pecut2 KaphMed.pecut3 PeMed.peshort PeMed.pecut2 PeMed.pecut3] ReshMed' lookup lookup_9"],"26":["[KaphMed KaphIni PeMed PeIni KaphMed.pe PeMed.pe KaphIni.short KaphMed.short PeIni.short PeMed.short KaphIni.cut1 KaphMed.cut1 PeIni.cut1 PeMed.cut1 KaphIni.cut2 KaphMed.cut2 PeIni.cut2 PeMed.cut2 KaphIni.cut3 KaphMed.cut3 PeIni.cut3 PeMed.cut3 KaphMed.peshort KaphMed.pecut2 KaphMed.pecut3 PeMed.peshort PeMed.pecut2 PeMed.pecut3] HethFin' lookup lookup_9","[KaphMed KaphIni PeMed PeIni KaphMed.pe PeMed.pe KaphIni.short KaphMed.short PeIni.short PeMed.short KaphIni.cut1 KaphMed.cut1 PeIni.cut1 PeMed.cut1 KaphIni.cut2 KaphMed.cut2 PeIni.cut2 PeMed.cut2 KaphIni.cut3 KaphMed.cut3 PeIni.cut3 PeMed.cut3 KaphMed.peshort KaphMed.pecut2 KaphMed.pecut3 PeMed.peshort PeMed.pecut2 PeMed.pecut3] SadheFin' lookup lookup_9"],"27":["[KaphMed KaphIni PeMed PeIni KaphMed.pe PeMed.pe KaphIni.short KaphMed.short PeIni.short PeMed.short KaphIni.cut1 KaphMed.cut1 PeIni.cut1 PeMed.cut1 KaphIni.cut2 KaphMed.cut2 PeIni.cut2 PeMed.cut2 KaphIni.cut3 KaphMed.cut3 PeIni.cut3 PeMed.cut3 KaphMed.peshort KaphMed.pecut2 KaphMed.pecut3 PeMed.peshort PeMed.pecut2 PeMed.pecut3] HeFin' lookup lookup_9","[KaphMed KaphIni PeMed PeIni KaphMed.pe PeMed.pe KaphIni.short KaphMed.short PeIni.short PeMed.short KaphIni.cut1 KaphMed.cut1 PeIni.cut1 PeMed.cut1 KaphIni.cut2 KaphMed.cut2 PeIni.cut2 PeMed.cut2 KaphIni.cut3 KaphMed.cut3 PeIni.cut3 PeMed.cut3 KaphMed.peshort KaphMed.pecut2 KaphMed.pecut3 PeMed.peshort PeMed.pecut2 PeMed.pecut3] SamekhFin' lookup lookup_9"],"28":["[KaphMed KaphIni PeMed PeIni KaphMed.pe PeMed.pe KaphIni.short KaphMed.short PeIni.short PeMed.short KaphIni.cut1 KaphMed.cut1 PeIni.cut1 PeMed.cut1 KaphIni.cut2 KaphMed.cut2 PeIni.cut2 PeMed.cut2 KaphIni.cut3 KaphMed.cut3 PeIni.cut3 PeMed.cut3 KaphMed.peshort KaphMed.pecut2 KaphMed.pecut3 PeMed.peshort PeMed.pecut2 PeMed.pecut3] GimelMed' lookup lookup_9","[KaphMed KaphIni PeMed PeIni KaphMed.pe PeMed.pe KaphIni.short KaphMed.short PeIni.short PeMed.short KaphIni.cut1 KaphMed.cut1 PeIni.cut1 PeMed.cut1 KaphIni.cut2 KaphMed.cut2 PeIni.cut2 PeMed.cut2 KaphIni.cut3 KaphMed.cut3 PeIni.cut3 PeMed.cut3 KaphMed.peshort KaphMed.pecut2 KaphMed.pecut3 PeMed.peshort PeMed.pecut2 PeMed.pecut3] SamekhMed' lookup lookup_9"],"29":["[KaphMed KaphIni PeMed PeIni KaphMed.pe PeMed.pe KaphIni.short KaphMed.short PeIni.short PeMed.short KaphIni.cut1 KaphMed.cut1 PeIni.cut1 PeMed.cut1 KaphIni.cut2 KaphMed.cut2 PeIni.cut2 PeMed.cut2 KaphIni.cut3 KaphMed.cut3 PeIni.cut3 PeMed.cut3 KaphMed.peshort KaphMed.pecut2 KaphMed.pecut3 PeMed.peshort PeMed.pecut2 PeMed.pecut3] GimelFin' lookup lookup_9","[KaphMed KaphIni PeMed PeIni KaphMed.pe PeMed.pe KaphIni.short KaphMed.short PeIni.short PeMed.short KaphIni.cut1 KaphMed.cut1 PeIni.cut1 PeMed.cut1 KaphIni.cut2 KaphMed.cut2 PeIni.cut2 PeMed.cut2 KaphIni.cut3 KaphMed.cut3 PeIni.cut3 PeMed.cut3 KaphMed.peshort KaphMed.pecut2 KaphMed.pecut3 PeMed.peshort PeMed.pecut2 PeMed.pecut3] ShinFin' lookup lookup_9"],"30":["[KaphMed KaphIni PeMed PeIni KaphMed.pe PeMed.pe KaphIni.short KaphMed.short PeIni.short PeMed.short KaphIni.cut1 KaphMed.cut1 PeIni.cut1 PeMed.cut1 KaphIni.cut2 KaphMed.cut2 PeIni.cut2 PeMed.cut2 KaphIni.cut3 KaphMed.cut3 PeIni.cut3 PeMed.cut3 KaphMed.peshort KaphMed.pecut2 KaphMed.pecut3 PeMed.peshort PeMed.pecut2 PeMed.pecut3] FethMed' lookup lookup_9","[KaphMed KaphIni PeMed PeIni KaphMed.pe PeMed.pe KaphIni.short KaphMed.short PeIni.short PeMed.short KaphIni.cut1 KaphMed.cut1 PeIni.cut1 PeMed.cut1 KaphIni.cut2 KaphMed.cut2 PeIni.cut2 PeMed.cut2 KaphIni.cut3 KaphMed.cut3 PeIni.cut3 PeMed.cut3 KaphMed.peshort KaphMed.pecut2 KaphMed.pecut3 PeMed.peshort PeMed.pecut2 PeMed.pecut3] ShinMed' lookup lookup_9"],"31":["[KaphMed KaphIni PeMed PeIni KaphMed.pe PeMed.pe KaphIni.short KaphMed.short PeIni.short PeMed.short KaphIni.cut1 KaphMed.cut1 PeIni.cut1 PeMed.cut1 KaphIni.cut2 KaphMed.cut2 PeIni.cut2 PeMed.cut2 KaphIni.cut3 KaphMed.cut3 PeIni.cut3 PeMed.cut3 KaphMed.peshort KaphMed.pecut2 KaphMed.pecut3 PeMed.peshort PeMed.pecut2 PeMed.pecut3] FethFin' lookup lookup_9","[KaphMed KaphIni PeMed PeIni KaphMed.pe PeMed.pe KaphIni.short KaphMed.short PeIni.short PeMed.short KaphIni.cut1 KaphMed.cut1 PeIni.cut1 PeMed.cut1 KaphIni.cut2 KaphMed.cut2 PeIni.cut2 PeMed.cut2 KaphIni.cut3 KaphMed.cut3 PeIni.cut3 PeMed.cut3 KaphMed.peshort KaphMed.pecut2 KaphMed.pecut3 PeMed.peshort PeMed.pecut2 PeMed.pecut3] TawFin' lookup lookup_9"],"32":["[KaphMed KaphIni PeMed PeIni KaphMed.pe PeMed.pe KaphIni.short KaphMed.short PeIni.short PeMed.short KaphIni.cut1 KaphMed.cut1 PeIni.cut1 PeMed.cut1 KaphIni.cut2 KaphMed.cut2 PeIni.cut2 PeMed.cut2 KaphIni.cut3 KaphMed.cut3 PeIni.cut3 PeMed.cut3 KaphMed.peshort KaphMed.pecut2 KaphMed.pecut3 PeMed.peshort PeMed.pecut2 PeMed.pecut3] BethMed' lookup lookup_9","[KaphMed KaphIni PeMed PeIni KaphMed.pe PeMed.pe KaphIni.short KaphMed.short PeIni.short PeMed.short KaphIni.cut1 KaphMed.cut1 PeIni.cut1 PeMed.cut1 KaphIni.cut2 KaphMed.cut2 PeIni.cut2 PeMed.cut2 KaphIni.cut3 KaphMed.cut3 PeIni.cut3 PeMed.cut3 KaphMed.peshort KaphMed.pecut2 KaphMed.pecut3 PeMed.peshort PeMed.pecut2 PeMed.pecut3] TawMed' lookup lookup_9"],"33":["[KaphMed KaphIni PeMed PeIni KaphMed.pe PeMed.pe KaphIni.short KaphMed.short PeIni.short PeMed.short KaphIni.cut1 KaphMed.cut1 PeIni.cut1 PeMed.cut1 KaphIni.cut2 KaphMed.cut2 PeIni.cut2 PeMed.cut2 KaphIni.cut3 KaphMed.cut3 PeIni.cut3 PeMed.cut3 KaphMed.peshort KaphMed.pecut2 KaphMed.pecut3 PeMed.peshort PeMed.pecut2 PeMed.pecut3] BethFin' lookup lookup_9","[KaphMed KaphIni PeMed PeIni KaphMed.pe PeMed.pe KaphIni.short KaphMed.short PeIni.short PeMed.short KaphIni.cut1 KaphMed.cut1 PeIni.cut1 PeMed.cut1 KaphIni.cut2 KaphMed.cut2 PeIni.cut2 PeMed.cut2 KaphIni.cut3 KaphMed.cut3 PeIni.cut3 PeMed.cut3 KaphMed.peshort KaphMed.pecut2 KaphMed.pecut3 PeMed.peshort PeMed.pecut2 PeMed.pecut3] YodhFin' lookup lookup_9"],"34":["[KaphMed KaphIni PeMed PeIni KaphMed.pe PeMed.pe KaphIni.short KaphMed.short PeIni.short PeMed.short KaphIni.cut1 KaphMed.cut1 PeIni.cut1 PeMed.cut1 KaphIni.cut2 KaphMed.cut2 PeIni.cut2 PeMed.cut2 KaphIni.cut3 KaphMed.cut3 PeIni.cut3 PeMed.cut3 KaphMed.peshort KaphMed.pecut2 KaphMed.pecut3 PeMed.peshort PeMed.pecut2 PeMed.pecut3] AyinFin' lookup lookup_9","[KaphMed KaphIni PeMed PeIni KaphMed.pe PeMed.pe KaphIni.short KaphMed.short PeIni.short PeMed.short KaphIni.cut1 KaphMed.cut1 PeIni.cut1 PeMed.cut1 KaphIni.cut2 KaphMed.cut2 PeIni.cut2 PeMed.cut2 KaphIni.cut3 KaphMed.cut3 PeIni.cut3 PeMed.cut3 KaphMed.peshort KaphMed.pecut2 KaphMed.pecut3 PeMed.peshort PeMed.pecut2 PeMed.pecut3] YodhMed' lookup lookup_9"],"35":["[KaphMed KaphIni PeMed PeIni KaphMed.pe PeMed.pe KaphIni.short KaphMed.short PeIni.short PeMed.short KaphIni.cut1 KaphMed.cut1 PeIni.cut1 PeMed.cut1 KaphIni.cut2 KaphMed.cut2 PeIni.cut2 PeMed.cut2 KaphIni.cut3 KaphMed.cut3 PeIni.cut3 PeMed.cut3 KaphMed.peshort KaphMed.pecut2 KaphMed.pecut3 PeMed.peshort PeMed.pecut2 PeMed.pecut3] AlephMed' lookup lookup_9","[KaphMed KaphIni PeMed PeIni KaphMed.pe PeMed.pe KaphIni.short KaphMed.short PeIni.short PeMed.short KaphIni.cut1 KaphMed.cut1 PeIni.cut1 PeMed.cut1 KaphIni.cut2 KaphMed.cut2 PeIni.cut2 PeMed.cut2 KaphIni.cut3 KaphMed.cut3 PeIni.cut3 PeMed.cut3 KaphMed.peshort KaphMed.pecut2 KaphMed.pecut3 PeMed.peshort PeMed.pecut2 PeMed.pecut3] ZayinFin' lookup lookup_9"],"36":["[KaphMed KaphIni PeMed PeIni KaphMed.pe PeMed.pe KaphIni.short KaphMed.short PeIni.short PeMed.short KaphIni.cut1 KaphMed.cut1 PeIni.cut1 PeMed.cut1 KaphIni.cut2 KaphMed.cut2 PeIni.cut2 PeMed.cut2 KaphIni.cut3 KaphMed.cut3 PeIni.cut3 PeMed.cut3 KaphMed.peshort KaphMed.pecut2 KaphMed.pecut3 PeMed.peshort PeMed.pecut2 PeMed.pecut3] AlephFin' lookup lookup_9","[KaphMed KaphIni PeMed PeIni KaphMed.pe PeMed.pe KaphIni.short KaphMed.short PeIni.short PeMed.short KaphIni.cut1 KaphMed.cut1 PeIni.cut1 PeMed.cut1 KaphIni.cut2 KaphMed.cut2 PeIni.cut2 PeMed.cut2 KaphIni.cut3 KaphMed.cut3 PeIni.cut3 PeMed.cut3 KaphMed.peshort KaphMed.pecut2 KaphMed.pecut3 PeMed.peshort PeMed.pecut2 PeMed.pecut3] ZayinMed' lookup lookup_9"]}}},"27":{"0":{"rules":{"0":["[KaphIni.cut1 PeIni.cut1] PeMed.ligaM' lookup lookup_9","[KaphIni.cut1 PeIni.cut1] KaphMed.ligaF' lookup lookup_9"],"1":["[KaphIni.cut1 PeIni.cut1] PeMed.ligaF' lookup lookup_9","[KaphIni.cut1 PeIni.cut1] KaphMed.ligaM' lookup lookup_9"],"2":["[KaphIni.cut1 PeIni.cut1] KaphMed.ligaM' lookup lookup_9","[KaphIni.cut1 PeIni.cut1] PeMed.ligaF' lookup lookup_9"],"3":["[KaphIni.cut1 PeIni.cut1] KaphMed.ligaF' lookup lookup_9","[KaphIni.cut1 PeIni.cut1] PeMed.ligaM' lookup lookup_9"]}}},"33":{"0":{"rules":{"0":["PeMed.DD' lookup lookup_32 [KaphMed.pe PeMed.pe]","KaphMed' lookup lookup_30 [KaphMed.pe PeMed.pe]"],"1":["PeMed' lookup lookup_32 [KaphMed.pe PeMed.pe]",null],"2":["KaphMed.EE' lookup lookup_32 [KaphMed.pe PeMed.pe]",null],"3":["KaphMed' lookup lookup_30 [KaphMed.pe PeMed.pe]",null]}},"1":[null,{"type":"chained_sequence_context","rules":["PeMed' lookup lookup_32 [KaphMed.pe PeMed.pe]"]}],"2":[null,{"type":"chained_sequence_context","rules":["KaphMed.EE' lookup lookup_32 [KaphMed.pe PeMed.pe]"]}],"3":[null,{"type":"chained_sequence_context","rules":["PeMed.DD' lookup lookup_32 [KaphMed.pe PeMed.pe]"]}]},"44":{"0":{"rules":{"0":["PeMed.pe' lookup lookup_43 [KaphFin PeFin KaphFin.alt04]","KaphMed' lookup lookup_43 [KaphFin PeFin KaphFin.alt04]"],"1":["PeMed' lookup lookup_43 [KaphFin PeFin KaphFin.alt04]","KaphMed.pe' lookup lookup_43 [KaphFin PeFin KaphFin.alt04]"],"2":["KaphMed.pe' lookup lookup_43 [KaphFin PeFin KaphFin.alt04]","PeMed' lookup lookup_43 [KaphFin PeFin KaphFin.alt04]"],"3":["KaphMed' lookup lookup_43 [KaphFin PeFin KaphFin.alt04]","PeMed.pe' lookup lookup_43 [KaphFin PeFin KaphFin.alt04]"]}}},"47":{"0":{"rules":{"0":["PeMed.pe' lookup lookup_43 [KaphMed.ligaM PeMed.ligaM KaphMed.ligaF PeMed.ligaF]","KaphMed' lookup lookup_43 [KaphMed.ligaM PeMed.ligaM KaphMed.ligaF PeMed.ligaF]"],"1":["PeMed' lookup lookup_43 [KaphMed.ligaM PeMed.ligaM KaphMed.ligaF PeMed.ligaF]","KaphMed.pe' lookup lookup_43 [KaphMed.ligaM PeMed.ligaM KaphMed.ligaF PeMed.ligaF]"],"2":["KaphMed.pe' lookup lookup_43 [KaphMed.ligaM PeMed.ligaM KaphMed.ligaF PeMed.ligaF]","PeMed' lookup lookup_43 [KaphMed.ligaM PeMed.ligaM KaphMed.ligaF PeMed.ligaF]"],"3":["KaphMed' lookup lookup_43 [KaphMed.ligaM PeMed.ligaM KaphMed.ligaF PeMed.ligaF]","PeMed.pe' lookup lookup_43 [KaphMed.ligaM PeMed.ligaM KaphMed.ligaF PeMed.ligaF]"]}}},"48":{"0":{"rules":{"0":["[KaphMed.cut1 PeMed.cut1 KaphMed.pecut1 PeMed.pecut1] PeMed.ligaM' lookup lookup_43","[KaphMed.cut1 PeMed.cut1 KaphMed.pecut1 PeMed.pecut1] KaphMed.ligaF' lookup lookup_43"],"1":["[KaphMed.cut1 PeMed.cut1 KaphMed.pecut1 PeMed.pecut1] PeMed.ligaF' lookup lookup_43","[KaphMed.cut1 PeMed.cut1 KaphMed.pecut1 PeMed.pecut1] KaphMed.ligaM' lookup lookup_43"],"2":["[KaphMed.cut1 PeMed.cut1 KaphMed.pecut1 PeMed.pecut1] KaphMed.ligaM' lookup lookup_43","[KaphMed.cut1 PeMed.cut1 KaphMed.pecut1 PeMed.pecut1] PeMed.ligaF' lookup lookup_43"],"3":["[KaphMed.cut1 PeMed.cut1 KaphMed.pecut1 PeMed.pecut1] KaphMed.ligaF' lookup lookup_43","[KaphMed.cut1 PeMed.cut1 KaphMed.pecut1 PeMed.pecut1] PeMed.ligaM' lookup lookup_43"]}}},"63":{"0":{"rules":{"0":["LamedhMed.pehook' lookup lookup_62 [dotaboveSogd twodotsaboveSogd curveaboveSogd hookaboveSogd dotaboveSogd.rho twodotsaboveSogd.rho] [ZayinFin ZayinMed YodhFin YodhMed NunFin NunMed] [dotaboveSogd twodotsaboveSogd curveaboveSogd hookaboveSogd dotaboveSogd.rho twodotsaboveSogd.rho]","LamedhMed.pe' lookup lookup_62 [dotaboveSogd twodotsaboveSogd curveaboveSogd hookaboveSogd dotaboveSogd.rho twodotsaboveSogd.rho] [ZayinFin ZayinMed YodhFin YodhMed NunFin NunMed] [dotaboveSogd twodotsaboveSogd curveaboveSogd hookaboveSogd dotaboveSogd.rho twodotsaboveSogd.rho]"],"1":["LamedhMed.pehook' lookup lookup_62 [ZayinFin ZayinMed YodhFin YodhMed NunFin NunMed] [dotaboveSogd twodotsaboveSogd curveaboveSogd hookaboveSogd dotaboveSogd.rho twodotsaboveSogd.rho]","LamedhMed.pe' lookup lookup_62 [ZayinFin ZayinMed YodhFin YodhMed NunFin NunMed] [dotaboveSogd twodotsaboveSogd curveaboveSogd hookaboveSogd dotaboveSogd.rho twodotsaboveSogd.rho]"],"2":["LamedhMed.pe' lookup lookup_62 [dotaboveSogd twodotsaboveSogd curveaboveSogd hookaboveSogd dotaboveSogd.rho twodotsaboveSogd.rho] [ZayinFin ZayinMed YodhFin YodhMed NunFin NunMed] [dotaboveSogd twodotsaboveSogd curveaboveSogd hookaboveSogd dotaboveSogd.rho twodotsaboveSogd.rho]","LamedhMed.pehook' lookup lookup_62 [dotaboveSogd twodotsaboveSogd curveaboveSogd hookaboveSogd dotaboveSogd.rho twodotsaboveSogd.rho] [ZayinFin ZayinMed YodhFin YodhMed NunFin NunMed] [dotaboveSogd twodotsaboveSogd curveaboveSogd hookaboveSogd dotaboveSogd.rho twodotsaboveSogd.rho]"],"3":["LamedhMed.pe' lookup lookup_62 [ZayinFin ZayinMed YodhFin YodhMed NunFin NunMed] [dotaboveSogd twodotsaboveSogd curveaboveSogd hookaboveSogd dotaboveSogd.rho twodotsaboveSogd.rho]","LamedhMed.pehook' lookup lookup_62 [ZayinFin ZayinMed YodhFin YodhMed NunFin NunMed] [dotaboveSogd twodotsaboveSogd curveaboveSogd hookaboveSogd dotaboveSogd.rho twodotsaboveSogd.rho]"]}}},"96":{"0":{"rules":{"0":["[ShinMed ShinIni ShinMed.pe ShinMed.DD ShinMed.peFx] YodhMed' lookup lookup_93","[ShinMed ShinIni ShinMed.pe ShinMed.DD ShinMed.peFx] AyinFin' lookup lookup_93"],"1":["[ShinMed ShinIni ShinMed.pe ShinMed.DD ShinMed.peFx] YodhFin' lookup lookup_93","[ShinMed ShinIni ShinMed.pe ShinMed.DD ShinMed.peFx] BethFin' lookup lookup_93"],"2":["[ShinMed ShinIni ShinMed.pe ShinMed.DD ShinMed.peFx] SamekhMed' lookup lookup_93","[ShinMed ShinIni ShinMed.pe ShinMed.DD ShinMed.peFx] BethMed' lookup lookup_93"],"3":["[ShinMed ShinIni ShinMed.pe ShinMed.DD ShinMed.peFx] SamekhFin' lookup lookup_93","[ShinMed ShinIni ShinMed.pe ShinMed.DD ShinMed.peFx] FethFin' lookup lookup_93"],"4":["[ShinMed ShinIni ShinMed.pe ShinMed.DD ShinMed.peFx] SadheFin.alt08' lookup lookup_93","[ShinMed ShinIni ShinMed.pe ShinMed.DD ShinMed.peFx] FethMed' lookup lookup_93"],"5":["[ShinMed ShinIni ShinMed.pe ShinMed.DD ShinMed.peFx] SadheFin.alt07' lookup lookup_93","[ShinMed ShinIni ShinMed.pe ShinMed.DD ShinMed.peFx] GimelFin' lookup lookup_93"],"6":["[ShinMed ShinIni ShinMed.pe ShinMed.DD ShinMed.peFx] SadheFin' lookup lookup_93","[ShinMed ShinIni ShinMed.pe ShinMed.DD ShinMed.peFx] GimelMed' lookup lookup_93"],"7":["[ShinMed ShinIni ShinMed.pe ShinMed.DD ShinMed.peFx] NunFin.alt06' lookup lookup_93","[ShinMed ShinIni ShinMed.pe ShinMed.DD ShinMed.peFx] HethFin' lookup lookup_93"],"8":["[ShinMed ShinIni ShinMed.pe ShinMed.DD ShinMed.peFx] MemFin' lookup lookup_93","[ShinMed ShinIni ShinMed.pe ShinMed.DD ShinMed.peFx] HethFin.alt03' lookup lookup_93"],"10":["[ShinMed ShinIni ShinMed.pe ShinMed.DD ShinMed.peFx] HethFin.alt03' lookup lookup_93","[ShinMed ShinIni ShinMed.pe ShinMed.DD ShinMed.peFx] MemFin' lookup lookup_93"],"11":["[ShinMed ShinIni ShinMed.pe ShinMed.DD ShinMed.peFx] HethFin' lookup lookup_93","[ShinMed ShinIni ShinMed.pe ShinMed.DD ShinMed.peFx] NunFin.alt06' lookup lookup_93"],"12":["[ShinMed ShinIni ShinMed.pe ShinMed.DD ShinMed.peFx] GimelMed' lookup lookup_93","[ShinMed ShinIni ShinMed.pe ShinMed.DD ShinMed.peFx] SadheFin' lookup lookup_93"],"13":["[ShinMed ShinIni ShinMed.pe ShinMed.DD ShinMed.peFx] GimelFin' lookup lookup_93","[ShinMed ShinIni ShinMed.pe ShinMed.DD ShinMed.peFx] SadheFin.alt07' lookup lookup_93"],"14":["[ShinMed ShinIni ShinMed.pe ShinMed.DD ShinMed.peFx] FethMed' lookup lookup_93","[ShinMed ShinIni ShinMed.pe ShinMed.DD ShinMed.peFx] SadheFin.alt08' lookup lookup_93"],"15":["[ShinMed ShinIni ShinMed.pe ShinMed.DD ShinMed.peFx] FethFin' lookup lookup_93","[ShinMed ShinIni ShinMed.pe ShinMed.DD ShinMed.peFx] SamekhFin' lookup lookup_93"],"16":["[ShinMed ShinIni ShinMed.pe ShinMed.DD ShinMed.peFx] BethMed' lookup lookup_93","[ShinMed ShinIni ShinMed.pe ShinMed.DD ShinMed.peFx] SamekhMed' lookup lookup_93"],"17":["[ShinMed ShinIni ShinMed.pe ShinMed.DD ShinMed.peFx] BethFin' lookup lookup_93","[ShinMed ShinIni ShinMed.pe ShinMed.DD ShinMed.peFx] YodhFin' lookup lookup_93"],"18":["[ShinMed ShinIni ShinMed.pe ShinMed.DD ShinMed.peFx] AyinFin' lookup lookup_93","[ShinMed ShinIni ShinMed.pe ShinMed.DD ShinMed.peFx] YodhMed' lookup lookup_93"]}}},"97":{"0":{"rules":{"0":["[ShinMed ShinIni ShinMed.pe ShinMed.DD] TawMed' lookup lookup_93","[ShinMed ShinIni ShinMed.pe ShinMed.DD] TawFin' lookup lookup_93"],"1":["[ShinMed ShinIni ShinMed.pe ShinMed.DD] TawFin.alt12' lookup lookup_93",null],"2":["[ShinMed ShinIni ShinMed.pe ShinMed.DD] TawFin' lookup lookup_93",null]}},"1":[null,{"type":"chained_sequence_context","rules":["[ShinMed ShinIni ShinMed.pe ShinMed.DD] TawFin.alt12' lookup lookup_93"]}],"2":[null,{"type":"chained_sequence_context","rules":["[ShinMed ShinIni ShinMed.pe ShinMed.DD] TawMed' lookup lookup_93"]}]},"99":{"0":{"rules":{"0":["ShinMed.pe' lookup lookup_98 [TawFin.CC TawFin.alt12CC TawMed.CC]","ShinIni' lookup lookup_93 [TawFin.CC TawFin.alt12CC TawMed.CC]"],"1":["ShinMed.DD' lookup lookup_98 [TawFin.CC TawFin.alt12CC TawMed.CC]",null],"2":["ShinMed' lookup lookup_98 [TawFin.CC TawFin.alt12CC TawMed.CC]",null],"3":["ShinIni' lookup lookup_93 [TawFin.CC TawFin.alt12CC TawMed.CC]",null]}},"1":[null,{"type":"chained_sequence_context","rules":["ShinMed' lookup lookup_98 [TawFin.CC TawFin.alt12CC TawMed.CC]"]}],"2":[null,{"type":"chained_sequence_context","rules":["ShinMed.pe' lookup lookup_98 [TawFin.CC TawFin.alt12CC TawMed.CC]"]}],"3":[null,{"type":"chained_sequence_context","rules":["ShinMed.DD' lookup lookup_98 [TawFin.CC TawFin.alt12CC TawMed.CC]"]}]},"100":{"0":{"rules":{"0":["[ShinMed ShinIni ShinMed.pe ShinMed.DD] WawFin' lookup lookup_98","[ShinMed ShinIni ShinMed.pe ShinMed.DD] PeFin' lookup lookup_98"],"1":["[ShinMed ShinIni ShinMed.pe ShinMed.DD] PeMed.short' lookup lookup_98","[ShinMed ShinIni ShinMed.pe ShinMed.DD] PeMed' lookup lookup_98"],"2":["[ShinMed ShinIni ShinMed.pe ShinMed.DD] PeMed.ligaM' lookup lookup_98","[ShinMed ShinIni ShinMed.pe ShinMed.DD] PeMed.cut1' lookup lookup_98"],"3":["[ShinMed ShinIni ShinMed.pe ShinMed.DD] PeMed.ligaF' lookup lookup_98","[ShinMed ShinIni ShinMed.pe ShinMed.DD] PeMed.cut2' lookup lookup_98"],"5":["[ShinMed ShinIni ShinMed.pe ShinMed.DD] PeMed.cut2' lookup lookup_98","[ShinMed ShinIni ShinMed.pe ShinMed.DD] PeMed.ligaF' lookup lookup_98"],"6":["[ShinMed ShinIni ShinMed.pe ShinMed.DD] PeMed.cut1' lookup lookup_98","[ShinMed ShinIni ShinMed.pe ShinMed.DD] PeMed.ligaM' lookup lookup_98"],"7":["[ShinMed ShinIni ShinMed.pe ShinMed.DD] PeMed' lookup lookup_98","[ShinMed ShinIni ShinMed.pe ShinMed.DD] PeMed.short' lookup lookup_98"],"8":["[ShinMed ShinIni ShinMed.pe ShinMed.DD] PeFin' lookup lookup_98","[ShinMed ShinIni ShinMed.pe ShinMed.DD] WawFin' lookup lookup_98"]}}},"102":{"0":{"rules":{"0":["ShinMed.pe' lookup lookup_101 [WawFin.DD PeFin.DD PeMed.DD PeMed.ligaMDD PeMed.ligaFDD PeMed.shortDD PeMed.cut1DD PeMed.cut2DD PeMed.cut3DD]","ShinIni' lookup lookup_98 [WawFin.DD PeFin.DD PeMed.DD PeMed.ligaMDD PeMed.ligaFDD PeMed.shortDD PeMed.cut1DD PeMed.cut2DD PeMed.cut3DD]"],"1":["ShinMed.DD' lookup lookup_101 [WawFin.DD PeFin.DD PeMed.DD PeMed.ligaMDD PeMed.ligaFDD PeMed.shortDD PeMed.cut1DD PeMed.cut2DD PeMed.cut3DD]",null],"2":["ShinMed' lookup lookup_101 [WawFin.DD PeFin.DD PeMed.DD PeMed.ligaMDD PeMed.ligaFDD PeMed.shortDD PeMed.cut1DD PeMed.cut2DD PeMed.cut3DD]",null],"3":["ShinIni' lookup lookup_98 [WawFin.DD PeFin.DD PeMed.DD PeMed.ligaMDD PeMed.ligaFDD PeMed.shortDD PeMed.cut1DD PeMed.cut2DD PeMed.cut3DD]",null]}},"1":[null,{"type":"chained_sequence_context","rules":["ShinMed' lookup lookup_101 [WawFin.DD PeFin.DD PeMed.DD PeMed.ligaMDD PeMed.ligaFDD PeMed.shortDD PeMed.cut1DD PeMed.cut2DD PeMed.cut3DD]"]}],"2":[null,{"type":"chained_sequence_context","rules":["ShinMed.pe' lookup lookup_101 [WawFin.DD PeFin.DD PeMed.DD PeMed.ligaMDD PeMed.ligaFDD PeMed.shortDD PeMed.cut1DD PeMed.cut2DD PeMed.cut3DD]"]}],"3":[null,{"type":"chained_sequence_context","rules":["ShinMed.DD' lookup lookup_101 [WawFin.DD PeFin.DD PeMed.DD PeMed.ligaMDD PeMed.ligaFDD PeMed.shortDD PeMed.cut1DD PeMed.cut2DD PeMed.cut3DD]"]}]},"103":{"0":{"rules":{"0":["[ShinMed ShinIni ShinMed.pe ShinMed.DD] ReshMed' lookup lookup_101","[ShinMed ShinIni ShinMed.pe ShinMed.DD] AlephFin' lookup lookup_101"],"1":["[ShinMed ShinIni ShinMed.pe ShinMed.DD] ReshFin' lookup lookup_101","[ShinMed ShinIni ShinMed.pe ShinMed.DD] AlephMed' lookup lookup_101"],"2":["[ShinMed ShinIni ShinMed.pe ShinMed.DD] MemMed' lookup lookup_101","[ShinMed ShinIni ShinMed.pe ShinMed.DD] HeFin' lookup lookup_101"],"3":["[ShinMed ShinIni ShinMed.pe ShinMed.DD] LeshMed' lookup lookup_101","[ShinMed ShinIni ShinMed.pe ShinMed.DD] KaphFin' lookup lookup_101"],"4":["[ShinMed ShinIni ShinMed.pe ShinMed.DD] LeshFin' lookup lookup_101","[ShinMed ShinIni ShinMed.pe ShinMed.DD] KaphFin.alt04' lookup lookup_101"],"5":["[ShinMed ShinIni ShinMed.pe ShinMed.DD] KaphMed.short' lookup lookup_101","[ShinMed ShinIni ShinMed.pe ShinMed.DD] KaphMed' lookup lookup_101"],"6":["[ShinMed ShinIni ShinMed.pe ShinMed.DD] KaphMed.ligaM' lookup lookup_101","[ShinMed ShinIni ShinMed.pe ShinMed.DD] KaphMed.cut1' lookup lookup_101"],"7":["[ShinMed ShinIni ShinMed.pe ShinMed.DD] KaphMed.ligaF' lookup lookup_101","[ShinMed ShinIni ShinMed.pe ShinMed.DD] KaphMed.cut2' lookup lookup_101"],"9":["[ShinMed ShinIni ShinMed.pe ShinMed.DD] KaphMed.cut2' lookup lookup_101","[ShinMed ShinIni ShinMed.pe ShinMed.DD] KaphMed.ligaF' lookup lookup_101"],"10":["[ShinMed ShinIni ShinMed.pe ShinMed.DD] KaphMed.cut1' lookup lookup_101","[ShinMed ShinIni ShinMed.pe ShinMed.DD] KaphMed.ligaM' lookup lookup_101"],"11":["[ShinMed ShinIni ShinMed.pe ShinMed.DD] KaphMed' lookup lookup_101","[ShinMed ShinIni ShinMed.pe ShinMed.DD] KaphMed.short' lookup lookup_101"],"12":["[ShinMed ShinIni ShinMed.pe ShinMed.DD] KaphFin.alt04' lookup lookup_101","[ShinMed ShinIni ShinMed.pe ShinMed.DD] LeshFin' lookup lookup_101"],"13":["[ShinMed ShinIni ShinMed.pe ShinMed.DD] KaphFin' lookup lookup_101","[ShinMed ShinIni ShinMed.pe ShinMed.DD] LeshMed' lookup lookup_101"],"14":["[ShinMed ShinIni ShinMed.pe ShinMed.DD] HeFin' lookup lookup_101","[ShinMed ShinIni ShinMed.pe ShinMed.DD] MemMed' lookup lookup_101"],"15":["[ShinMed ShinIni ShinMed.pe ShinMed.DD] AlephMed' lookup lookup_101","[ShinMed ShinIni ShinMed.pe ShinMed.DD] ReshFin' lookup lookup_101"],"16":["[ShinMed ShinIni ShinMed.pe ShinMed.DD] AlephFin' lookup lookup_101","[ShinMed ShinIni ShinMed.pe ShinMed.DD] ReshMed' lookup lookup_101"]}}},"106":{"0":{"rules":{"0":["[ShinMed ShinIni ShinMed.pe ShinMed.DD] WawMed' lookup lookup_104","[ShinMed ShinIni ShinMed.pe ShinMed.DD] SadheFin.alt09' lookup lookup_104"],"1":["[ShinMed ShinIni ShinMed.pe ShinMed.DD] TawFin.alt15' lookup lookup_104","[ShinMed ShinIni ShinMed.pe ShinMed.DD] SadheFin.alt10' lookup lookup_104"],"2":["[ShinMed ShinIni ShinMed.pe ShinMed.DD] TawFin.alt14' lookup lookup_104","[ShinMed ShinIni ShinMed.pe ShinMed.DD] SadheFin.alt11' lookup lookup_104"],"3":["[ShinMed ShinIni ShinMed.pe ShinMed.DD] TawFin.alt13' lookup lookup_104","[ShinMed ShinIni ShinMed.pe ShinMed.DD] SadheMed' lookup lookup_104"],"4":["[ShinMed ShinIni ShinMed.pe ShinMed.DD] SadheMed' lookup lookup_104","[ShinMed ShinIni ShinMed.pe ShinMed.DD] TawFin.alt13' lookup lookup_104"],"5":["[ShinMed ShinIni ShinMed.pe ShinMed.DD] SadheFin.alt11' lookup lookup_104","[ShinMed ShinIni ShinMed.pe ShinMed.DD] TawFin.alt14' lookup lookup_104"],"6":["[ShinMed ShinIni ShinMed.pe ShinMed.DD] SadheFin.alt10' lookup lookup_104","[ShinMed ShinIni ShinMed.pe ShinMed.DD] TawFin.alt15' lookup lookup_104"],"7":["[ShinMed ShinIni ShinMed.pe ShinMed.DD] SadheFin.alt09' lookup lookup_104","[ShinMed ShinIni ShinMed.pe ShinMed.DD] WawMed' lookup lookup_104"]}}},"108":{"0":{"rules":{"0":["ShinMed.pe' lookup lookup_107 [SadheFin.alt09FF SadheFin.alt10FF SadheFin.alt11FF TawFin.alt13FF TawFin.alt14FF TawFin.alt15FF WawMed.FF SadheMed.FF]","ShinIni' lookup lookup_104 [SadheFin.alt09FF SadheFin.alt10FF SadheFin.alt11FF TawFin.alt13FF TawFin.alt14FF TawFin.alt15FF WawMed.FF SadheMed.FF]"],"1":["ShinMed.DD' lookup lookup_107 [SadheFin.alt09FF SadheFin.alt10FF SadheFin.alt11FF TawFin.alt13FF TawFin.alt14FF TawFin.alt15FF WawMed.FF SadheMed.FF]",null],"2":["ShinMed' lookup lookup_107 [SadheFin.alt09FF SadheFin.alt10FF SadheFin.alt11FF TawFin.alt13FF TawFin.alt14FF TawFin.alt15FF WawMed.FF SadheMed.FF]",null],"3":["ShinIni' lookup lookup_104 [SadheFin.alt09FF SadheFin.alt10FF SadheFin.alt11FF TawFin.alt13FF TawFin.alt14FF TawFin.alt15FF WawMed.FF SadheMed.FF]",null]}},"1":[null,{"type":"chained_sequence_context","rules":["ShinMed' lookup lookup_107 [SadheFin.alt09FF SadheFin.alt10FF SadheFin.alt11FF TawFin.alt13FF TawFin.alt14FF TawFin.alt15FF WawMed.FF SadheMed.FF]"]}],"2":[null,{"type":"chained_sequence_context","rules":["ShinMed.pe' lookup lookup_107 [SadheFin.alt09FF SadheFin.alt10FF SadheFin.alt11FF TawFin.alt13FF TawFin.alt14FF TawFin.alt15FF WawMed.FF SadheMed.FF]"]}],"3":[null,{"type":"chained_sequence_context","rules":["ShinMed.DD' lookup lookup_107 [SadheFin.alt09FF SadheFin.alt10FF SadheFin.alt11FF TawFin.alt13FF TawFin.alt14FF TawFin.alt15FF WawMed.FF SadheMed.FF]"]}]},"116":{"0":{"rules":{"1":["[AlephMed.pe GimelMed.pe HethMed.pe YodhMed.pe SamekhMed.pe SadheMed.pe SadheMed.pe2 ShinMed.pe] TawMed' lookup lookup_115",null],"2":["[AlephMed.EE GimelMed.BB HethMed.BB YodhMed.BB SamekhMed.BB SadheMed.FF TawMed.CC ShinMed.peCx ShinMed.Cx ShinMed.DDCx] TawMed' lookup lookup_113",null],"3":["[BethMed BethIni LamedhMed ReshMed ReshIni FethMed FethIni LamedhMed.hook BethMed.pe LamedhMed.pe LamedhMed.pehook ReshMed.pe FethMed.pe BethMed.BB ReshMed.EE FethMed.BB] TawMed' lookup lookup_111",null],"4":["[SadheIni SadheMed AlephMed AlephIni GimelMed GimelIni WawMed WawIni HethMed HethIni YodhMed YodhIni SamekhMed SamekhIni AyinMed AyinIni] TawFin' lookup lookup_107",null],"5":["[SadheIni SadheMed AlephMed AlephIni GimelMed GimelIni WawMed WawIni HethMed HethIni YodhMed YodhIni SamekhMed SamekhIni AyinMed AyinIni] TawFin' lookup lookup_115",null],"6":["[AlephMed.pe GimelMed.pe HethMed.pe YodhMed.pe SamekhMed.pe SadheMed.pe SadheMed.pe2 ShinMed.pe] TawFin' lookup lookup_114",null],"7":["[AlephMed.pe GimelMed.pe HethMed.pe YodhMed.pe SamekhMed.pe SadheMed.pe SadheMed.pe2 ShinMed.pe] TawFin' lookup lookup_113",null],"8":["[AlephMed.EE GimelMed.BB HethMed.BB YodhMed.BB SamekhMed.BB SadheMed.FF TawMed.CC ShinMed.peCx ShinMed.Cx ShinMed.DDCx] TawFin' lookup lookup_112",null],"9":["[AlephMed.EE GimelMed.BB HethMed.BB YodhMed.BB SamekhMed.BB SadheMed.FF TawMed.CC ShinMed.peCx ShinMed.Cx ShinMed.DDCx] TawFin' lookup lookup_111",null],"10":["[BethMed BethIni LamedhMed ReshMed ReshIni FethMed FethIni LamedhMed.hook BethMed.pe LamedhMed.pe LamedhMed.pehook ReshMed.pe FethMed.pe BethMed.BB ReshMed.EE FethMed.BB] TawFin' lookup lookup_110",null],"11":["[BethMed BethIni LamedhMed ReshMed ReshIni FethMed FethIni LamedhMed.hook BethMed.pe LamedhMed.pe LamedhMed.pehook ReshMed.pe FethMed.pe BethMed.BB ReshMed.EE FethMed.BB] TawFin' lookup lookup_109",null]}},"1":[null,{"type":"chained_sequence_context","rules":["[SadheIni SadheMed AlephMed AlephIni GimelMed GimelIni WawMed WawIni HethMed HethIni YodhMed YodhIni SamekhMed SamekhIni AyinMed AyinIni] TawFin' lookup lookup_107"]}],"2":[null,{"type":"chained_sequence_context","rules":["[SadheIni SadheMed AlephMed AlephIni GimelMed GimelIni WawMed WawIni HethMed HethIni YodhMed YodhIni SamekhMed SamekhIni AyinMed AyinIni] TawFin' lookup lookup_115"]}],"3":[null,{"type":"chained_sequence_context","rules":["[AlephMed.pe GimelMed.pe HethMed.pe YodhMed.pe SamekhMed.pe SadheMed.pe SadheMed.pe2 ShinMed.pe] TawMed' lookup lookup_115"]}],"4":[null,{"type":"chained_sequence_context","rules":["[AlephMed.pe GimelMed.pe HethMed.pe YodhMed.pe SamekhMed.pe SadheMed.pe SadheMed.pe2 ShinMed.pe] TawFin' lookup lookup_114"]}],"5":[null,{"type":"chained_sequence_context","rules":["[AlephMed.pe GimelMed.pe HethMed.pe YodhMed.pe SamekhMed.pe SadheMed.pe SadheMed.pe2 ShinMed.pe] TawFin' lookup lookup_113"]}],"6":[null,{"type":"chained_sequence_context","rules":["[AlephMed.EE GimelMed.BB HethMed.BB YodhMed.BB SamekhMed.BB SadheMed.FF TawMed.CC ShinMed.peCx ShinMed.Cx ShinMed.DDCx] TawMed' lookup lookup_113"]}],"7":[null,{"type":"chained_sequence_context","rules":["[AlephMed.EE GimelMed.BB HethMed.BB YodhMed.BB SamekhMed.BB SadheMed.FF TawMed.CC ShinMed.peCx ShinMed.Cx ShinMed.DDCx] TawFin' lookup lookup_112"]}],"8":[null,{"type":"chained_sequence_context","rules":["[AlephMed.EE GimelMed.BB HethMed.BB YodhMed.BB SamekhMed.BB SadheMed.FF TawMed.CC ShinMed.peCx ShinMed.Cx ShinMed.DDCx] TawFin' lookup lookup_111"]}],"9":[null,{"type":"chained_sequence_context","rules":["[BethMed BethIni LamedhMed ReshMed ReshIni FethMed FethIni LamedhMed.hook BethMed.pe LamedhMed.pe LamedhMed.pehook ReshMed.pe FethMed.pe BethMed.BB ReshMed.EE FethMed.BB] TawMed' lookup lookup_111"]}],"10":[null,{"type":"chained_sequence_context","rules":["[BethMed BethIni LamedhMed ReshMed ReshIni FethMed FethIni LamedhMed.hook BethMed.pe LamedhMed.pe LamedhMed.pehook ReshMed.pe FethMed.pe BethMed.BB ReshMed.EE FethMed.BB] TawFin' lookup lookup_110"]}],"11":[null,{"type":"chained_sequence_context","rules":["[BethMed BethIni LamedhMed ReshMed ReshIni FethMed FethIni LamedhMed.hook BethMed.pe LamedhMed.pe LamedhMed.pehook ReshMed.pe FethMed.pe BethMed.BB ReshMed.EE FethMed.BB] TawFin' lookup lookup_109"]}]},"121":{"0":{"rules":{"0":["[LamedhIni LamedhIni.hook] [twodotsbelowSogd curvebelowSogd hookbelowSogd longhookbelowSogd twodotsbelowSogd.rho] TawMed' lookup lookup_120","[twodotsbelowSogd curvebelowSogd hookbelowSogd longhookbelowSogd twodotsbelowSogd.rho] [LamedhIni LamedhIni.hook] TawMed' lookup lookup_120"],"1":["[LamedhIni LamedhIni.hook] TawMed' lookup lookup_119",null],"2":["[LamedhIni LamedhIni.hook] [twodotsbelowSogd curvebelowSogd hookbelowSogd longhookbelowSogd twodotsbelowSogd.rho] TawFin' lookup lookup_120",null],"3":["[LamedhIni LamedhIni.hook] [twodotsbelowSogd curvebelowSogd hookbelowSogd longhookbelowSogd twodotsbelowSogd.rho] TawFin' lookup lookup_119",null],"4":["[LamedhIni LamedhIni.hook] TawFin' lookup lookup_118",null],"5":["[LamedhIni LamedhIni.hook] TawFin' lookup lookup_117",null]}},"1":[null,{"type":"chained_sequence_context","rules":["[twodotsbelowSogd curvebelowSogd hookbelowSogd longhookbelowSogd twodotsbelowSogd.rho] [LamedhIni LamedhIni.hook] TawFin' lookup lookup_120"]}],"2":[null,{"type":"chained_sequence_context","rules":["[twodotsbelowSogd curvebelowSogd hookbelowSogd longhookbelowSogd twodotsbelowSogd.rho] [LamedhIni LamedhIni.hook] TawFin' lookup lookup_119"]}],"3":[null,{"type":"chained_sequence_context","rules":["[LamedhIni LamedhIni.hook] TawMed' lookup lookup_119"]}],"4":[null,{"type":"chained_sequence_context","rules":["[LamedhIni LamedhIni.hook] TawFin' lookup lookup_118"]}],"5":[null,{"type":"chained_sequence_context","rules":["[LamedhIni LamedhIni.hook] TawFin' lookup lookup_117"]}]},"126":{"0":{"rules":{"0":["[LamedhIni LamedhIni.hook] [dotbelowSogd reshbelowSogd strokebelowSogd strokebelowSogd.2 strokebelowSogd.3 strokebelowSogd.4 strokebelowSogd.5 strokebelowSogd.6 strokebelowSogd.7 dotbelowSogd.rho] TawMed' lookup lookup_125","[LamedhIni LamedhIni.hook] [dotbelowSogd reshbelowSogd strokebelowSogd strokebelowSogd.2 strokebelowSogd.3 strokebelowSogd.4 strokebelowSogd.5 strokebelowSogd.6 strokebelowSogd.7 dotbelowSogd.rho] TawFin' lookup lookup_125"],"1":["[LamedhIni LamedhIni.hook] TawMed' lookup lookup_124","[LamedhIni LamedhIni.hook] [dotbelowSogd reshbelowSogd strokebelowSogd strokebelowSogd.2 strokebelowSogd.3 strokebelowSogd.4 strokebelowSogd.5 strokebelowSogd.6 strokebelowSogd.7 dotbelowSogd.rho] TawFin' lookup lookup_124"],"2":["[LamedhIni LamedhIni.hook] [dotbelowSogd reshbelowSogd strokebelowSogd strokebelowSogd.2 strokebelowSogd.3 strokebelowSogd.4 strokebelowSogd.5 strokebelowSogd.6 strokebelowSogd.7 dotbelowSogd.rho] TawFin' lookup lookup_125","[LamedhIni LamedhIni.hook] TawFin' lookup lookup_123"],"3":["[LamedhIni LamedhIni.hook] [dotbelowSogd reshbelowSogd strokebelowSogd strokebelowSogd.2 strokebelowSogd.3 strokebelowSogd.4 strokebelowSogd.5 strokebelowSogd.6 strokebelowSogd.7 dotbelowSogd.rho] TawFin' lookup lookup_124","[LamedhIni LamedhIni.hook] TawFin' lookup lookup_122"],"4":["[LamedhIni LamedhIni.hook] TawFin' lookup lookup_123","[LamedhIni LamedhIni.hook] [dotbelowSogd reshbelowSogd strokebelowSogd strokebelowSogd.2 strokebelowSogd.3 strokebelowSogd.4 strokebelowSogd.5 strokebelowSogd.6 strokebelowSogd.7 dotbelowSogd.rho] TawMed' lookup lookup_125"],"5":["[LamedhIni LamedhIni.hook] TawFin' lookup lookup_122","[LamedhIni LamedhIni.hook] TawMed' lookup lookup_124"]}}},"128":{"0":{"rules":{"0":["[MemMed MemIni MemMed.pe MemMed.EE MemIni.S MemMed.S MemMed.peS MemMed.EES] SadheFin.alt08' lookup lookup_127","[MemMed MemIni MemMed.pe MemMed.EE MemIni.S MemMed.S MemMed.peS MemMed.EES] GimelFin' lookup lookup_127"],"1":["[MemMed MemIni MemMed.pe MemMed.EE MemIni.S MemMed.S MemMed.peS MemMed.EES] SadheFin.alt07' lookup lookup_127","[MemMed MemIni MemMed.pe MemMed.EE MemIni.S MemMed.S MemMed.peS MemMed.EES] GimelMed' lookup lookup_127"],"2":["[MemMed MemIni MemMed.pe MemMed.EE MemIni.S MemMed.S MemMed.peS MemMed.EES] SadheFin' lookup lookup_127","[MemMed MemIni MemMed.pe MemMed.EE MemIni.S MemMed.S MemMed.peS MemMed.EES] HethFin' lookup lookup_127"],"3":["[MemMed MemIni MemMed.pe MemMed.EE MemIni.S MemMed.S MemMed.peS MemMed.EES] MemFin' lookup lookup_127","[MemMed MemIni MemMed.pe MemMed.EE MemIni.S MemMed.S MemMed.peS MemMed.EES] HethFin.alt03' lookup lookup_127"],"5":["[MemMed MemIni MemMed.pe MemMed.EE MemIni.S MemMed.S MemMed.peS MemMed.EES] HethFin.alt03' lookup lookup_127","[MemMed MemIni MemMed.pe MemMed.EE MemIni.S MemMed.S MemMed.peS MemMed.EES] MemFin' lookup lookup_127"],"6":["[MemMed MemIni MemMed.pe MemMed.EE MemIni.S MemMed.S MemMed.peS MemMed.EES] HethFin' lookup lookup_127","[MemMed MemIni MemMed.pe MemMed.EE MemIni.S MemMed.S MemMed.peS MemMed.EES] SadheFin' lookup lookup_127"],"7":["[MemMed MemIni MemMed.pe MemMed.EE MemIni.S MemMed.S MemMed.peS MemMed.EES] GimelMed' lookup lookup_127","[MemMed MemIni MemMed.pe MemMed.EE MemIni.S MemMed.S MemMed.peS MemMed.EES] SadheFin.alt07' lookup lookup_127"],"8":["[MemMed MemIni MemMed.pe MemMed.EE MemIni.S MemMed.S MemMed.peS MemMed.EES] GimelFin' lookup lookup_127","[MemMed MemIni MemMed.pe MemMed.EE MemIni.S MemMed.S MemMed.peS MemMed.EES] SadheFin.alt08' lookup lookup_127"]}}},"130":{"0":{"rules":{"1":["[MemMed MemIni MemMed.pe MemMed.EE MemIni.S MemMed.S MemMed.peS MemMed.EES]'  [dotbelowSogd twodotsbelowSogd curvebelowSogd hookbelowSogd longhookbelowSogd reshbelowSogd strokebelowSogd strokebelowSogd.2 strokebelowSogd.3 strokebelowSogd.4 strokebelowSogd.5 strokebelowSogd.6 strokebelowSogd.7 dotbelowSogd.rho twodotsbelowSogd.rho] YodhFin [dotbelowSogd twodotsbelowSogd curvebelowSogd hookbelowSogd longhookbelowSogd reshbelowSogd strokebelowSogd strokebelowSogd.2 strokebelowSogd.3 strokebelowSogd.4 strokebelowSogd.5 strokebelowSogd.6 strokebelowSogd.7 dotbelowSogd.rho twodotsbelowSogd.rho]",null],"2":["[MemMed MemIni MemMed.pe MemMed.EE MemIni.S MemMed.S MemMed.peS MemMed.EES]'  YodhMed [dotbelowSogd twodotsbelowSogd curvebelowSogd hookbelowSogd longhookbelowSogd reshbelowSogd strokebelowSogd strokebelowSogd.2 strokebelowSogd.3 strokebelowSogd.4 strokebelowSogd.5 strokebelowSogd.6 strokebelowSogd.7 dotbelowSogd.rho twodotsbelowSogd.rho]",null],"3":["[MemMed MemIni MemMed.pe MemMed.EE MemIni.S MemMed.S MemMed.peS MemMed.EES]'  YodhFin [dotbelowSogd twodotsbelowSogd curvebelowSogd hookbelowSogd longhookbelowSogd reshbelowSogd strokebelowSogd strokebelowSogd.2 strokebelowSogd.3 strokebelowSogd.4 strokebelowSogd.5 strokebelowSogd.6 strokebelowSogd.7 dotbelowSogd.rho twodotsbelowSogd.rho]",null],"4":["[MemMed MemIni MemMed.pe MemMed.EE MemIni.S MemMed.S MemMed.peS MemMed.EES] [dotbelowSogd twodotsbelowSogd curvebelowSogd hookbelowSogd longhookbelowSogd reshbelowSogd strokebelowSogd strokebelowSogd.2 strokebelowSogd.3 strokebelowSogd.4 strokebelowSogd.5 strokebelowSogd.6 strokebelowSogd.7 dotbelowSogd.rho twodotsbelowSogd.rho] YodhMed' lookup lookup_129",null],"5":["[MemMed MemIni MemMed.pe MemMed.EE MemIni.S MemMed.S MemMed.peS MemMed.EES] YodhMed' lookup lookup_129",null],"6":["[MemMed MemIni MemMed.pe MemMed.EE MemIni.S MemMed.S MemMed.peS MemMed.EES] [dotbelowSogd twodotsbelowSogd curvebelowSogd hookbelowSogd longhookbelowSogd reshbelowSogd strokebelowSogd strokebelowSogd.2 strokebelowSogd.3 strokebelowSogd.4 strokebelowSogd.5 strokebelowSogd.6 strokebelowSogd.7 dotbelowSogd.rho twodotsbelowSogd.rho] YodhFin' lookup lookup_129",null],"7":["[MemMed MemIni MemMed.pe MemMed.EE MemIni.S MemMed.S MemMed.peS MemMed.EES] YodhFin' lookup lookup_129",null]}},"1":[null,{"type":"chained_sequence_context","rules":["[MemMed MemIni MemMed.pe MemMed.EE MemIni.S MemMed.S MemMed.peS MemMed.EES]'  [dotbelowSogd twodotsbelowSogd curvebelowSogd hookbelowSogd longhookbelowSogd reshbelowSogd strokebelowSogd strokebelowSogd.2 strokebelowSogd.3 strokebelowSogd.4 strokebelowSogd.5 strokebelowSogd.6 strokebelowSogd.7 dotbelowSogd.rho twodotsbelowSogd.rho] YodhFin [dotbelowSogd twodotsbelowSogd curvebelowSogd hookbelowSogd longhookbelowSogd reshbelowSogd strokebelowSogd strokebelowSogd.2 strokebelowSogd.3 strokebelowSogd.4 strokebelowSogd.5 strokebelowSogd.6 strokebelowSogd.7 dotbelowSogd.rho twodotsbelowSogd.rho]"]}],"2":[null,{"type":"chained_sequence_context","rules":["[MemMed MemIni MemMed.pe MemMed.EE MemIni.S MemMed.S MemMed.peS MemMed.EES]'  YodhMed [dotbelowSogd twodotsbelowSogd curvebelowSogd hookbelowSogd longhookbelowSogd reshbelowSogd strokebelowSogd strokebelowSogd.2 strokebelowSogd.3 strokebelowSogd.4 strokebelowSogd.5 strokebelowSogd.6 strokebelowSogd.7 dotbelowSogd.rho twodotsbelowSogd.rho]"]}],"3":[null,{"type":"chained_sequence_context","rules":["[MemMed MemIni MemMed.pe MemMed.EE MemIni.S MemMed.S MemMed.peS MemMed.EES]'  YodhFin [dotbelowSogd twodotsbelowSogd curvebelowSogd hookbelowSogd longhookbelowSogd reshbelowSogd strokebelowSogd strokebelowSogd.2 strokebelowSogd.3 strokebelowSogd.4 strokebelowSogd.5 strokebelowSogd.6 strokebelowSogd.7 dotbelowSogd.rho twodotsbelowSogd.rho]"]}],"4":[null,{"type":"chained_sequence_context","rules":["[dotbelowSogd twodotsbelowSogd curvebelowSogd hookbelowSogd longhookbelowSogd reshbelowSogd strokebelowSogd strokebelowSogd.2 strokebelowSogd.3 strokebelowSogd.4 strokebelowSogd.5 strokebelowSogd.6 strokebelowSogd.7 dotbelowSogd.rho twodotsbelowSogd.rho] [MemMed MemIni MemMed.pe MemMed.EE MemIni.S MemMed.S MemMed.peS MemMed.EES] YodhMed' lookup lookup_129"]}],"5":[null,{"type":"chained_sequence_context","rules":["[dotbelowSogd twodotsbelowSogd curvebelowSogd hookbelowSogd longhookbelowSogd reshbelowSogd strokebelowSogd strokebelowSogd.2 strokebelowSogd.3 strokebelowSogd.4 strokebelowSogd.5 strokebelowSogd.6 strokebelowSogd.7 dotbelowSogd.rho twodotsbelowSogd.rho] [MemMed MemIni MemMed.pe MemMed.EE MemIni.S MemMed.S MemMed.peS MemMed.EES] YodhFin' lookup lookup_129"]}],"6":[null,{"type":"chained_sequence_context","rules":["[MemMed MemIni MemMed.pe MemMed.EE MemIni.S MemMed.S MemMed.peS MemMed.EES] YodhMed' lookup lookup_129"]}],"7":[null,{"type":"chained_sequence_context","rules":["[MemMed MemIni MemMed.pe MemMed.EE MemIni.S MemMed.S MemMed.peS MemMed.EES] YodhFin' lookup lookup_129"]}]},"132":{"0":{"rules":{"0":["[MemMed MemIni MemMed.pe MemMed.EE MemIni.S MemMed.S MemMed.peS MemMed.EES] HeFin' lookup lookup_131","[MemMed MemIni MemMed.pe MemMed.EE MemIni.S MemMed.S MemMed.peS MemMed.EES] AyinFin' lookup lookup_131"],"1":["[MemMed MemIni MemMed.pe MemMed.EE MemIni.S MemMed.S MemMed.peS MemMed.EES] FethMed' lookup lookup_131","[MemMed MemIni MemMed.pe MemMed.EE MemIni.S MemMed.S MemMed.peS MemMed.EES] BethFin' lookup lookup_131"],"2":["[MemMed MemIni MemMed.pe MemMed.EE MemIni.S MemMed.S MemMed.peS MemMed.EES] FethFin' lookup lookup_131","[MemMed MemIni MemMed.pe MemMed.EE MemIni.S MemMed.S MemMed.peS MemMed.EES] BethMed' lookup lookup_131"],"3":["[MemMed MemIni MemMed.pe MemMed.EE MemIni.S MemMed.S MemMed.peS MemMed.EES] BethMed' lookup lookup_131","[MemMed MemIni MemMed.pe MemMed.EE MemIni.S MemMed.S MemMed.peS MemMed.EES] FethFin' lookup lookup_131"],"4":["[MemMed MemIni MemMed.pe MemMed.EE MemIni.S MemMed.S MemMed.peS MemMed.EES] BethFin' lookup lookup_131","[MemMed MemIni MemMed.pe MemMed.EE MemIni.S MemMed.S MemMed.peS MemMed.EES] FethMed' lookup lookup_131"],"5":["[MemMed MemIni MemMed.pe MemMed.EE MemIni.S MemMed.S MemMed.peS MemMed.EES] AyinFin' lookup lookup_131","[MemMed MemIni MemMed.pe MemMed.EE MemIni.S MemMed.S MemMed.peS MemMed.EES] HeFin' lookup lookup_131"]}}},"134":{"0":{"rules":{"0":["MemMed.pe'  [dotbelowSogd twodotsbelowSogd curvebelowSogd hookbelowSogd longhookbelowSogd reshbelowSogd strokebelowSogd strokebelowSogd.2 strokebelowSogd.3 strokebelowSogd.4 strokebelowSogd.5 strokebelowSogd.6 strokebelowSogd.7 dotbelowSogd.rho twodotsbelowSogd.rho] [ZayinFin ZayinMed LamedhFin LamedhMed NunFin NunMed LamedhFin.hook LamedhMed.hook ZayinFin.alt02 NunFin.alt05 LamedhMed.wide LamedhMed.hookwide YodhFin.BB YodhMed.BB] [dotbelowSogd twodotsbelowSogd curvebelowSogd hookbelowSogd longhookbelowSogd reshbelowSogd strokebelowSogd strokebelowSogd.2 strokebelowSogd.3 strokebelowSogd.4 strokebelowSogd.5 strokebelowSogd.6 strokebelowSogd.7 dotbelowSogd.rho twodotsbelowSogd.rho]","MemIni'  [dotbelowSogd twodotsbelowSogd curvebelowSogd hookbelowSogd longhookbelowSogd reshbelowSogd strokebelowSogd strokebelowSogd.2 strokebelowSogd.3 strokebelowSogd.4 strokebelowSogd.5 strokebelowSogd.6 strokebelowSogd.7 dotbelowSogd.rho twodotsbelowSogd.rho] [ZayinFin ZayinMed LamedhFin LamedhMed NunFin NunMed LamedhFin.hook LamedhMed.hook ZayinFin.alt02 NunFin.alt05 LamedhMed.wide LamedhMed.hookwide YodhFin.BB YodhMed.BB] [dotbelowSogd twodotsbelowSogd curvebelowSogd hookbelowSogd longhookbelowSogd reshbelowSogd strokebelowSogd strokebelowSogd.2 strokebelowSogd.3 strokebelowSogd.4 strokebelowSogd.5 strokebelowSogd.6 strokebelowSogd.7 dotbelowSogd.rho twodotsbelowSogd.rho]"],"1":["MemMed.pe'  [ZayinFin ZayinMed LamedhFin LamedhMed NunFin NunMed LamedhFin.hook LamedhMed.hook ZayinFin.alt02 NunFin.alt05 LamedhMed.wide LamedhMed.hookwide YodhFin.BB YodhMed.BB] [dotbelowSogd twodotsbelowSogd curvebelowSogd hookbelowSogd longhookbelowSogd reshbelowSogd strokebelowSogd strokebelowSogd.2 strokebelowSogd.3 strokebelowSogd.4 strokebelowSogd.5 strokebelowSogd.6 strokebelowSogd.7 dotbelowSogd.rho twodotsbelowSogd.rho]","MemIni'  [ZayinFin ZayinMed LamedhFin LamedhMed NunFin NunMed LamedhFin.hook LamedhMed.hook ZayinFin.alt02 NunFin.alt05 LamedhMed.wide LamedhMed.hookwide YodhFin.BB YodhMed.BB] [dotbelowSogd twodotsbelowSogd curvebelowSogd hookbelowSogd longhookbelowSogd reshbelowSogd strokebelowSogd strokebelowSogd.2 strokebelowSogd.3 strokebelowSogd.4 strokebelowSogd.5 strokebelowSogd.6 strokebelowSogd.7 dotbelowSogd.rho twodotsbelowSogd.rho]"],"2":["MemMed.pe' lookup lookup_133 [dotbelowSogd twodotsbelowSogd curvebelowSogd hookbelowSogd longhookbelowSogd reshbelowSogd strokebelowSogd strokebelowSogd.2 strokebelowSogd.3 strokebelowSogd.4 strokebelowSogd.5 strokebelowSogd.6 strokebelowSogd.7 dotbelowSogd.rho twodotsbelowSogd.rho] [ZayinFin ZayinMed LamedhFin LamedhMed NunFin NunMed LamedhFin.hook LamedhMed.hook ZayinFin.alt02 NunFin.alt05 LamedhMed.wide LamedhMed.hookwide YodhFin.BB YodhMed.BB]","MemIni' lookup lookup_133 [dotbelowSogd twodotsbelowSogd curvebelowSogd hookbelowSogd longhookbelowSogd reshbelowSogd strokebelowSogd strokebelowSogd.2 strokebelowSogd.3 strokebelowSogd.4 strokebelowSogd.5 strokebelowSogd.6 strokebelowSogd.7 dotbelowSogd.rho twodotsbelowSogd.rho] [ZayinFin ZayinMed LamedhFin LamedhMed NunFin NunMed LamedhFin.hook LamedhMed.hook ZayinFin.alt02 NunFin.alt05 LamedhMed.wide LamedhMed.hookwide YodhFin.BB YodhMed.BB]"],"3":["MemMed.pe' lookup lookup_133 [ZayinFin ZayinMed LamedhFin LamedhMed NunFin NunMed LamedhFin.hook LamedhMed.hook ZayinFin.alt02 NunFin.alt05 LamedhMed.wide LamedhMed.hookwide YodhFin.BB YodhMed.BB]","MemIni' lookup lookup_133 [ZayinFin ZayinMed LamedhFin LamedhMed NunFin NunMed LamedhFin.hook LamedhMed.hook ZayinFin.alt02 NunFin.alt05 LamedhMed.wide LamedhMed.hookwide YodhFin.BB YodhMed.BB]"],"4":["MemMed.EE'  [dotbelowSogd twodotsbelowSogd curvebelowSogd hookbelowSogd longhookbelowSogd reshbelowSogd strokebelowSogd strokebelowSogd.2 strokebelowSogd.3 strokebelowSogd.4 strokebelowSogd.5 strokebelowSogd.6 strokebelowSogd.7 dotbelowSogd.rho twodotsbelowSogd.rho] [ZayinFin ZayinMed LamedhFin LamedhMed NunFin NunMed LamedhFin.hook LamedhMed.hook ZayinFin.alt02 NunFin.alt05 LamedhMed.wide LamedhMed.hookwide YodhFin.BB YodhMed.BB] [dotbelowSogd twodotsbelowSogd curvebelowSogd hookbelowSogd longhookbelowSogd reshbelowSogd strokebelowSogd strokebelowSogd.2 strokebelowSogd.3 strokebelowSogd.4 strokebelowSogd.5 strokebelowSogd.6 strokebelowSogd.7 dotbelowSogd.rho twodotsbelowSogd.rho]","MemMed'  [dotbelowSogd twodotsbelowSogd curvebelowSogd hookbelowSogd longhookbelowSogd reshbelowSogd strokebelowSogd strokebelowSogd.2 strokebelowSogd.3 strokebelowSogd.4 strokebelowSogd.5 strokebelowSogd.6 strokebelowSogd.7 dotbelowSogd.rho twodotsbelowSogd.rho] [ZayinFin ZayinMed LamedhFin LamedhMed NunFin NunMed LamedhFin.hook LamedhMed.hook ZayinFin.alt02 NunFin.alt05 LamedhMed.wide LamedhMed.hookwide YodhFin.BB YodhMed.BB] [dotbelowSogd twodotsbelowSogd curvebelowSogd hookbelowSogd longhookbelowSogd reshbelowSogd strokebelowSogd strokebelowSogd.2 strokebelowSogd.3 strokebelowSogd.4 strokebelowSogd.5 strokebelowSogd.6 strokebelowSogd.7 dotbelowSogd.rho twodotsbelowSogd.rho]"],"5":["MemMed.EE'  [ZayinFin ZayinMed LamedhFin LamedhMed NunFin NunMed LamedhFin.hook LamedhMed.hook ZayinFin.alt02 NunFin.alt05 LamedhMed.wide LamedhMed.hookwide YodhFin.BB YodhMed.BB] [dotbelowSogd twodotsbelowSogd curvebelowSogd hookbelowSogd longhookbelowSogd reshbelowSogd strokebelowSogd strokebelowSogd.2 strokebelowSogd.3 strokebelowSogd.4 strokebelowSogd.5 strokebelowSogd.6 strokebelowSogd.7 dotbelowSogd.rho twodotsbelowSogd.rho]","MemMed'  [ZayinFin ZayinMed LamedhFin LamedhMed NunFin NunMed LamedhFin.hook LamedhMed.hook ZayinFin.alt02 NunFin.alt05 LamedhMed.wide LamedhMed.hookwide YodhFin.BB YodhMed.BB] [dotbelowSogd twodotsbelowSogd curvebelowSogd hookbelowSogd longhookbelowSogd reshbelowSogd strokebelowSogd strokebelowSogd.2 strokebelowSogd.3 strokebelowSogd.4 strokebelowSogd.5 strokebelowSogd.6 strokebelowSogd.7 dotbelowSogd.rho twodotsbelowSogd.rho]"],"6":["MemMed.EE' lookup lookup_133 [dotbelowSogd twodotsbelowSogd curvebelowSogd hookbelowSogd longhookbelowSogd reshbelowSogd strokebelowSogd strokebelowSogd.2 strokebelowSogd.3 strokebelowSogd.4 strokebelowSogd.5 strokebelowSogd.6 strokebelowSogd.7 dotbelowSogd.rho twodotsbelowSogd.rho] [ZayinFin ZayinMed LamedhFin LamedhMed NunFin NunMed LamedhFin.hook LamedhMed.hook ZayinFin.alt02 NunFin.alt05 LamedhMed.wide LamedhMed.hookwide YodhFin.BB YodhMed.BB]","MemMed' lookup lookup_133 [dotbelowSogd twodotsbelowSogd curvebelowSogd hookbelowSogd longhookbelowSogd reshbelowSogd strokebelowSogd strokebelowSogd.2 strokebelowSogd.3 strokebelowSogd.4 strokebelowSogd.5 strokebelowSogd.6 strokebelowSogd.7 dotbelowSogd.rho twodotsbelowSogd.rho] [ZayinFin ZayinMed LamedhFin LamedhMed NunFin NunMed LamedhFin.hook LamedhMed.hook ZayinFin.alt02 NunFin.alt05 LamedhMed.wide LamedhMed.hookwide YodhFin.BB YodhMed.BB]"],"7":["MemMed.EE' lookup lookup_133 [ZayinFin ZayinMed LamedhFin LamedhMed NunFin NunMed LamedhFin.hook LamedhMed.hook ZayinFin.alt02 NunFin.alt05 LamedhMed.wide LamedhMed.hookwide YodhFin.BB YodhMed.BB]","MemMed' lookup lookup_133 [ZayinFin ZayinMed LamedhFin LamedhMed NunFin NunMed LamedhFin.hook LamedhMed.hook ZayinFin.alt02 NunFin.alt05 LamedhMed.wide LamedhMed.hookwide YodhFin.BB YodhMed.BB]"],"8":["MemMed'  [dotbelowSogd twodotsbelowSogd curvebelowSogd hookbelowSogd longhookbelowSogd reshbelowSogd strokebelowSogd strokebelowSogd.2 strokebelowSogd.3 strokebelowSogd.4 strokebelowSogd.5 strokebelowSogd.6 strokebelowSogd.7 dotbelowSogd.rho twodotsbelowSogd.rho] [ZayinFin ZayinMed LamedhFin LamedhMed NunFin NunMed LamedhFin.hook LamedhMed.hook ZayinFin.alt02 NunFin.alt05 LamedhMed.wide LamedhMed.hookwide YodhFin.BB YodhMed.BB] [dotbelowSogd twodotsbelowSogd curvebelowSogd hookbelowSogd longhookbelowSogd reshbelowSogd strokebelowSogd strokebelowSogd.2 strokebelowSogd.3 strokebelowSogd.4 strokebelowSogd.5 strokebelowSogd.6 strokebelowSogd.7 dotbelowSogd.rho twodotsbelowSogd.rho]","MemMed.EE'  [dotbelowSogd twodotsbelowSogd curvebelowSogd hookbelowSogd longhookbelowSogd reshbelowSogd strokebelowSogd strokebelowSogd.2 strokebelowSogd.3 strokebelowSogd.4 strokebelowSogd.5 strokebelowSogd.6 strokebelowSogd.7 dotbelowSogd.rho twodotsbelowSogd.rho] [ZayinFin ZayinMed LamedhFin LamedhMed NunFin NunMed LamedhFin.hook LamedhMed.hook ZayinFin.alt02 NunFin.alt05 LamedhMed.wide LamedhMed.hookwide YodhFin.BB YodhMed.BB] [dotbelowSogd twodotsbelowSogd curvebelowSogd hookbelowSogd longhookbelowSogd reshbelowSogd strokebelowSogd strokebelowSogd.2 strokebelowSogd.3 strokebelowSogd.4 strokebelowSogd.5 strokebelowSogd.6 strokebelowSogd.7 dotbelowSogd.rho twodotsbelowSogd.rho]"],"9":["MemMed'  [ZayinFin ZayinMed LamedhFin LamedhMed NunFin NunMed LamedhFin.hook LamedhMed.hook ZayinFin.alt02 NunFin.alt05 LamedhMed.wide LamedhMed.hookwide YodhFin.BB YodhMed.BB] [dotbelowSogd twodotsbelowSogd curvebelowSogd hookbelowSogd longhookbelowSogd reshbelowSogd strokebelowSogd strokebelowSogd.2 strokebelowSogd.3 strokebelowSogd.4 strokebelowSogd.5 strokebelowSogd.6 strokebelowSogd.7 dotbelowSogd.rho twodotsbelowSogd.rho]","MemMed.EE'  [ZayinFin ZayinMed LamedhFin LamedhMed NunFin NunMed LamedhFin.hook LamedhMed.hook ZayinFin.alt02 NunFin.alt05 LamedhMed.wide LamedhMed.hookwide YodhFin.BB YodhMed.BB] [dotbelowSogd twodotsbelowSogd curvebelowSogd hookbelowSogd longhookbelowSogd reshbelowSogd strokebelowSogd strokebelowSogd.2 strokebelowSogd.3 strokebelowSogd.4 strokebelowSogd.5 strokebelowSogd.6 strokebelowSogd.7 dotbelowSogd.rho twodotsbelowSogd.rho]"],"10":["MemMed' lookup lookup_133 [dotbelowSogd twodotsbelowSogd curvebelowSogd hookbelowSogd longhookbelowSogd reshbelowSogd strokebelowSogd strokebelowSogd.2 strokebelowSogd.3 strokebelowSogd.4 strokebelowSogd.5 strokebelowSogd.6 strokebelowSogd.7 dotbelowSogd.rho twodotsbelowSogd.rho] [ZayinFin ZayinMed LamedhFin LamedhMed NunFin NunMed LamedhFin.hook LamedhMed.hook ZayinFin.alt02 NunFin.alt05 LamedhMed.wide LamedhMed.hookwide YodhFin.BB YodhMed.BB]","MemMed.EE' lookup lookup_133 [dotbelowSogd twodotsbelowSogd curvebelowSogd hookbelowSogd longhookbelowSogd reshbelowSogd strokebelowSogd strokebelowSogd.2 strokebelowSogd.3 strokebelowSogd.4 strokebelowSogd.5 strokebelowSogd.6 strokebelowSogd.7 dotbelowSogd.rho twodotsbelowSogd.rho] [ZayinFin ZayinMed LamedhFin LamedhMed NunFin NunMed LamedhFin.hook LamedhMed.hook ZayinFin.alt02 NunFin.alt05 LamedhMed.wide LamedhMed.hookwide YodhFin.BB YodhMed.BB]"],"11":["MemMed' lookup lookup_133 [ZayinFin ZayinMed LamedhFin LamedhMed NunFin NunMed LamedhFin.hook LamedhMed.hook ZayinFin.alt02 NunFin.alt05 LamedhMed.wide LamedhMed.hookwide YodhFin.BB YodhMed.BB]","MemMed.EE' lookup lookup_133 [ZayinFin ZayinMed LamedhFin LamedhMed NunFin NunMed LamedhFin.hook LamedhMed.hook ZayinFin.alt02 NunFin.alt05 LamedhMed.wide LamedhMed.hookwide YodhFin.BB YodhMed.BB]"],"12":["MemIni'  [dotbelowSogd twodotsbelowSogd curvebelowSogd hookbelowSogd longhookbelowSogd reshbelowSogd strokebelowSogd strokebelowSogd.2 strokebelowSogd.3 strokebelowSogd.4 strokebelowSogd.5 strokebelowSogd.6 strokebelowSogd.7 dotbelowSogd.rho twodotsbelowSogd.rho] [ZayinFin ZayinMed LamedhFin LamedhMed NunFin NunMed LamedhFin.hook LamedhMed.hook ZayinFin.alt02 NunFin.alt05 LamedhMed.wide LamedhMed.hookwide YodhFin.BB YodhMed.BB] [dotbelowSogd twodotsbelowSogd curvebelowSogd hookbelowSogd longhookbelowSogd reshbelowSogd strokebelowSogd strokebelowSogd.2 strokebelowSogd.3 strokebelowSogd.4 strokebelowSogd.5 strokebelowSogd.6 strokebelowSogd.7 dotbelowSogd.rho twodotsbelowSogd.rho]","MemMed.pe'  [dotbelowSogd twodotsbelowSogd curvebelowSogd hookbelowSogd longhookbelowSogd reshbelowSogd strokebelowSogd strokebelowSogd.2 strokebelowSogd.3 strokebelowSogd.4 strokebelowSogd.5 strokebelowSogd.6 strokebelowSogd.7 dotbelowSogd.rho twodotsbelowSogd.rho] [ZayinFin ZayinMed LamedhFin LamedhMed NunFin NunMed LamedhFin.hook LamedhMed.hook ZayinFin.alt02 NunFin.alt05 LamedhMed.wide LamedhMed.hookwide YodhFin.BB YodhMed.BB] [dotbelowSogd twodotsbelowSogd curvebelowSogd hookbelowSogd longhookbelowSogd reshbelowSogd strokebelowSogd strokebelowSogd.2 strokebelowSogd.3 strokebelowSogd.4 strokebelowSogd.5 strokebelowSogd.6 strokebelowSogd.7 dotbelowSogd.rho twodotsbelowSogd.rho]"],"13":["MemIni'  [ZayinFin ZayinMed LamedhFin LamedhMed NunFin NunMed LamedhFin.hook LamedhMed.hook ZayinFin.alt02 NunFin.alt05 LamedhMed.wide LamedhMed.hookwide YodhFin.BB YodhMed.BB] [dotbelowSogd twodotsbelowSogd curvebelowSogd hookbelowSogd longhookbelowSogd reshbelowSogd strokebelowSogd strokebelowSogd.2 strokebelowSogd.3 strokebelowSogd.4 strokebelowSogd.5 strokebelowSogd.6 strokebelowSogd.7 dotbelowSogd.rho twodotsbelowSogd.rho]","MemMed.pe'  [ZayinFin ZayinMed LamedhFin LamedhMed NunFin NunMed LamedhFin.hook LamedhMed.hook ZayinFin.alt02 NunFin.alt05 LamedhMed.wide LamedhMed.hookwide YodhFin.BB YodhMed.BB] [dotbelowSogd twodotsbelowSogd curvebelowSogd hookbelowSogd longhookbelowSogd reshbelowSogd strokebelowSogd strokebelowSogd.2 strokebelowSogd.3 strokebelowSogd.4 strokebelowSogd.5 strokebelowSogd.6 strokebelowSogd.7 dotbelowSogd.rho twodotsbelowSogd.rho]"],"14":["MemIni' lookup lookup_133 [dotbelowSogd twodotsbelowSogd curvebelowSogd hookbelowSogd longhookbelowSogd reshbelowSogd strokebelowSogd strokebelowSogd.2 strokebelowSogd.3 strokebelowSogd.4 strokebelowSogd.5 strokebelowSogd.6 strokebelowSogd.7 dotbelowSogd.rho twodotsbelowSogd.rho] [ZayinFin ZayinMed LamedhFin LamedhMed NunFin NunMed LamedhFin.hook LamedhMed.hook ZayinFin.alt02 NunFin.alt05 LamedhMed.wide LamedhMed.hookwide YodhFin.BB YodhMed.BB]","MemMed.pe' lookup lookup_133 [dotbelowSogd twodotsbelowSogd curvebelowSogd hookbelowSogd longhookbelowSogd reshbelowSogd strokebelowSogd strokebelowSogd.2 strokebelowSogd.3 strokebelowSogd.4 strokebelowSogd.5 strokebelowSogd.6 strokebelowSogd.7 dotbelowSogd.rho twodotsbelowSogd.rho] [ZayinFin ZayinMed LamedhFin LamedhMed NunFin NunMed LamedhFin.hook LamedhMed.hook ZayinFin.alt02 NunFin.alt05 LamedhMed.wide LamedhMed.hookwide YodhFin.BB YodhMed.BB]"],"15":["MemIni' lookup lookup_133 [ZayinFin ZayinMed LamedhFin LamedhMed NunFin NunMed LamedhFin.hook LamedhMed.hook ZayinFin.alt02 NunFin.alt05 LamedhMed.wide LamedhMed.hookwide YodhFin.BB YodhMed.BB]","MemMed.pe' lookup lookup_133 [ZayinFin ZayinMed LamedhFin LamedhMed NunFin NunMed LamedhFin.hook LamedhMed.hook ZayinFin.alt02 NunFin.alt05 LamedhMed.wide LamedhMed.hookwide YodhFin.BB YodhMed.BB]"]}}},"135":{"0":{"rules":{"0":["MemMed.pe'  [dotbelowSogd twodotsbelowSogd curvebelowSogd hookbelowSogd longhookbelowSogd reshbelowSogd strokebelowSogd strokebelowSogd.2 strokebelowSogd.3 strokebelowSogd.4 strokebelowSogd.5 strokebelowSogd.6 strokebelowSogd.7 dotbelowSogd.rho twodotsbelowSogd.rho] NunFin.alt06BB [dotbelowSogd twodotsbelowSogd curvebelowSogd hookbelowSogd longhookbelowSogd reshbelowSogd strokebelowSogd strokebelowSogd.2 strokebelowSogd.3 strokebelowSogd.4 strokebelowSogd.5 strokebelowSogd.6 strokebelowSogd.7 dotbelowSogd.rho twodotsbelowSogd.rho]","MemIni'  [dotbelowSogd twodotsbelowSogd curvebelowSogd hookbelowSogd longhookbelowSogd reshbelowSogd strokebelowSogd strokebelowSogd.2 strokebelowSogd.3 strokebelowSogd.4 strokebelowSogd.5 strokebelowSogd.6 strokebelowSogd.7 dotbelowSogd.rho twodotsbelowSogd.rho] NunFin.alt06BB [dotbelowSogd twodotsbelowSogd curvebelowSogd hookbelowSogd longhookbelowSogd reshbelowSogd strokebelowSogd strokebelowSogd.2 strokebelowSogd.3 strokebelowSogd.4 strokebelowSogd.5 strokebelowSogd.6 strokebelowSogd.7 dotbelowSogd.rho twodotsbelowSogd.rho]"],"1":["MemMed.pe'  NunFin.alt06BB [dotbelowSogd twodotsbelowSogd curvebelowSogd hookbelowSogd longhookbelowSogd reshbelowSogd strokebelowSogd strokebelowSogd.2 strokebelowSogd.3 strokebelowSogd.4 strokebelowSogd.5 strokebelowSogd.6 strokebelowSogd.7 dotbelowSogd.rho twodotsbelowSogd.rho]","MemIni'  NunFin.alt06BB [dotbelowSogd twodotsbelowSogd curvebelowSogd hookbelowSogd longhookbelowSogd reshbelowSogd strokebelowSogd strokebelowSogd.2 strokebelowSogd.3 strokebelowSogd.4 strokebelowSogd.5 strokebelowSogd.6 strokebelowSogd.7 dotbelowSogd.rho twodotsbelowSogd.rho]"],"2":["MemMed.pe' lookup lookup_133 NunFin.alt06BB","MemIni' lookup lookup_133 NunFin.alt06BB"],"3":["MemMed.EE'  [dotbelowSogd twodotsbelowSogd curvebelowSogd hookbelowSogd longhookbelowSogd reshbelowSogd strokebelowSogd strokebelowSogd.2 strokebelowSogd.3 strokebelowSogd.4 strokebelowSogd.5 strokebelowSogd.6 strokebelowSogd.7 dotbelowSogd.rho twodotsbelowSogd.rho] NunFin.alt06BB [dotbelowSogd twodotsbelowSogd curvebelowSogd hookbelowSogd longhookbelowSogd reshbelowSogd strokebelowSogd strokebelowSogd.2 strokebelowSogd.3 strokebelowSogd.4 strokebelowSogd.5 strokebelowSogd.6 strokebelowSogd.7 dotbelowSogd.rho twodotsbelowSogd.rho]","MemMed'  [dotbelowSogd twodotsbelowSogd curvebelowSogd hookbelowSogd longhookbelowSogd reshbelowSogd strokebelowSogd strokebelowSogd.2 strokebelowSogd.3 strokebelowSogd.4 strokebelowSogd.5 strokebelowSogd.6 strokebelowSogd.7 dotbelowSogd.rho twodotsbelowSogd.rho] NunFin.alt06BB [dotbelowSogd twodotsbelowSogd curvebelowSogd hookbelowSogd longhookbelowSogd reshbelowSogd strokebelowSogd strokebelowSogd.2 strokebelowSogd.3 strokebelowSogd.4 strokebelowSogd.5 strokebelowSogd.6 strokebelowSogd.7 dotbelowSogd.rho twodotsbelowSogd.rho]"],"4":["MemMed.EE'  NunFin.alt06BB [dotbelowSogd twodotsbelowSogd curvebelowSogd hookbelowSogd longhookbelowSogd reshbelowSogd strokebelowSogd strokebelowSogd.2 strokebelowSogd.3 strokebelowSogd.4 strokebelowSogd.5 strokebelowSogd.6 strokebelowSogd.7 dotbelowSogd.rho twodotsbelowSogd.rho]","MemMed'  NunFin.alt06BB [dotbelowSogd twodotsbelowSogd curvebelowSogd hookbelowSogd longhookbelowSogd reshbelowSogd strokebelowSogd strokebelowSogd.2 strokebelowSogd.3 strokebelowSogd.4 strokebelowSogd.5 strokebelowSogd.6 strokebelowSogd.7 dotbelowSogd.rho twodotsbelowSogd.rho]"],"5":["MemMed.EE' lookup lookup_133 NunFin.alt06BB","MemMed' lookup lookup_133 NunFin.alt06BB"],"6":["MemMed'  [dotbelowSogd twodotsbelowSogd curvebelowSogd hookbelowSogd longhookbelowSogd reshbelowSogd strokebelowSogd strokebelowSogd.2 strokebelowSogd.3 strokebelowSogd.4 strokebelowSogd.5 strokebelowSogd.6 strokebelowSogd.7 dotbelowSogd.rho twodotsbelowSogd.rho] NunFin.alt06BB [dotbelowSogd twodotsbelowSogd curvebelowSogd hookbelowSogd longhookbelowSogd reshbelowSogd strokebelowSogd strokebelowSogd.2 strokebelowSogd.3 strokebelowSogd.4 strokebelowSogd.5 strokebelowSogd.6 strokebelowSogd.7 dotbelowSogd.rho twodotsbelowSogd.rho]","MemMed.EE'  [dotbelowSogd twodotsbelowSogd curvebelowSogd hookbelowSogd longhookbelowSogd reshbelowSogd strokebelowSogd strokebelowSogd.2 strokebelowSogd.3 strokebelowSogd.4 strokebelowSogd.5 strokebelowSogd.6 strokebelowSogd.7 dotbelowSogd.rho twodotsbelowSogd.rho] NunFin.alt06BB [dotbelowSogd twodotsbelowSogd curvebelowSogd hookbelowSogd longhookbelowSogd reshbelowSogd strokebelowSogd strokebelowSogd.2 strokebelowSogd.3 strokebelowSogd.4 strokebelowSogd.5 strokebelowSogd.6 strokebelowSogd.7 dotbelowSogd.rho twodotsbelowSogd.rho]"],"7":["MemMed'  NunFin.alt06BB [dotbelowSogd twodotsbelowSogd curvebelowSogd hookbelowSogd longhookbelowSogd reshbelowSogd strokebelowSogd strokebelowSogd.2 strokebelowSogd.3 strokebelowSogd.4 strokebelowSogd.5 strokebelowSogd.6 strokebelowSogd.7 dotbelowSogd.rho twodotsbelowSogd.rho]","MemMed.EE'  NunFin.alt06BB [dotbelowSogd twodotsbelowSogd curvebelowSogd hookbelowSogd longhookbelowSogd reshbelowSogd strokebelowSogd strokebelowSogd.2 strokebelowSogd.3 strokebelowSogd.4 strokebelowSogd.5 strokebelowSogd.6 strokebelowSogd.7 dotbelowSogd.rho twodotsbelowSogd.rho]"],"8":["MemMed' lookup lookup_133 NunFin.alt06BB","MemMed.EE' lookup lookup_133 NunFin.alt06BB"],"9":["MemIni'  [dotbelowSogd twodotsbelowSogd curvebelowSogd hookbelowSogd longhookbelowSogd reshbelowSogd strokebelowSogd strokebelowSogd.2 strokebelowSogd.3 strokebelowSogd.4 strokebelowSogd.5 strokebelowSogd.6 strokebelowSogd.7 dotbelowSogd.rho twodotsbelowSogd.rho] NunFin.alt06BB [dotbelowSogd twodotsbelowSogd curvebelowSogd hookbelowSogd longhookbelowSogd reshbelowSogd strokebelowSogd strokebelowSogd.2 strokebelowSogd.3 strokebelowSogd.4 strokebelowSogd.5 strokebelowSogd.6 strokebelowSogd.7 dotbelowSogd.rho twodotsbelowSogd.rho]","MemMed.pe'  [dotbelowSogd twodotsbelowSogd curvebelowSogd hookbelowSogd longhookbelowSogd reshbelowSogd strokebelowSogd strokebelowSogd.2 strokebelowSogd.3 strokebelowSogd.4 strokebelowSogd.5 strokebelowSogd.6 strokebelowSogd.7 dotbelowSogd.rho twodotsbelowSogd.rho] NunFin.alt06BB [dotbelowSogd twodotsbelowSogd curvebelowSogd hookbelowSogd longhookbelowSogd reshbelowSogd strokebelowSogd strokebelowSogd.2 strokebelowSogd.3 strokebelowSogd.4 strokebelowSogd.5 strokebelowSogd.6 strokebelowSogd.7 dotbelowSogd.rho twodotsbelowSogd.rho]"],"10":["MemIni'  NunFin.alt06BB [dotbelowSogd twodotsbelowSogd curvebelowSogd hookbelowSogd longhookbelowSogd reshbelowSogd strokebelowSogd strokebelowSogd.2 strokebelowSogd.3 strokebelowSogd.4 strokebelowSogd.5 strokebelowSogd.6 strokebelowSogd.7 dotbelowSogd.rho twodotsbelowSogd.rho]","MemMed.pe'  NunFin.alt06BB [dotbelowSogd twodotsbelowSogd curvebelowSogd hookbelowSogd longhookbelowSogd reshbelowSogd strokebelowSogd strokebelowSogd.2 strokebelowSogd.3 strokebelowSogd.4 strokebelowSogd.5 strokebelowSogd.6 strokebelowSogd.7 dotbelowSogd.rho twodotsbelowSogd.rho]"],"11":["MemIni' lookup lookup_133 NunFin.alt06BB","MemMed.pe' lookup lookup_133 NunFin.alt06BB"]}}},"137":{"0":{"rules":{"0":["MemMed.pe' lookup lookup_136 [ShinFin ShinMed ShinMed.Cx ShinMed.Dx ShinMed.Ex ShinMed.Fx]","MemIni' lookup lookup_136 [ShinFin ShinMed ShinMed.Cx ShinMed.Dx ShinMed.Ex ShinMed.Fx]"],"1":["MemMed.EE' lookup lookup_136 [ShinFin ShinMed ShinMed.Cx ShinMed.Dx ShinMed.Ex ShinMed.Fx]","MemMed' lookup lookup_136 [ShinFin ShinMed ShinMed.Cx ShinMed.Dx ShinMed.Ex ShinMed.Fx]"],"2":["MemMed' lookup lookup_136 [ShinFin ShinMed ShinMed.Cx ShinMed.Dx ShinMed.Ex ShinMed.Fx]","MemMed.EE' lookup lookup_136 [ShinFin ShinMed ShinMed.Cx ShinMed.Dx ShinMed.Ex ShinMed.Fx]"],"3":["MemIni' lookup lookup_136 [ShinFin ShinMed ShinMed.Cx ShinMed.Dx ShinMed.Ex ShinMed.Fx]","MemMed.pe' lookup lookup_136 [ShinFin ShinMed ShinMed.Cx ShinMed.Dx ShinMed.Ex ShinMed.Fx]"]}}},"138":{"0":{"rules":{"0":["[MemIni.Dx MemMed.Dx MemMed.peDx MemMed.EEDx] ShinMed.Fx' lookup lookup_136","[MemIni.Dx MemMed.Dx MemMed.peDx MemMed.EEDx] ShinFin' lookup lookup_136"],"1":["[MemIni.Dx MemMed.Dx MemMed.peDx MemMed.EEDx] ShinMed.Ex' lookup lookup_136","[MemIni.Dx MemMed.Dx MemMed.peDx MemMed.EEDx] ShinMed' lookup lookup_136"],"2":["[MemIni.Dx MemMed.Dx MemMed.peDx MemMed.EEDx] ShinMed.Dx' lookup lookup_136","[MemIni.Dx MemMed.Dx MemMed.peDx MemMed.EEDx] ShinMed.Cx' lookup lookup_136"],"3":["[MemIni.Dx MemMed.Dx MemMed.peDx MemMed.EEDx] ShinMed.Cx' lookup lookup_136","[MemIni.Dx MemMed.Dx MemMed.peDx MemMed.EEDx] ShinMed.Dx' lookup lookup_136"],"4":["[MemIni.Dx MemMed.Dx MemMed.peDx MemMed.EEDx] ShinMed' lookup lookup_136","[MemIni.Dx MemMed.Dx MemMed.peDx MemMed.EEDx] ShinMed.Ex' lookup lookup_136"],"5":["[MemIni.Dx MemMed.Dx MemMed.peDx MemMed.EEDx] ShinFin' lookup lookup_136","[MemIni.Dx MemMed.Dx MemMed.peDx MemMed.EEDx] ShinMed.Fx' lookup lookup_136"]}}},"140":{"0":{"rules":{"0":["MemMed.pe' lookup lookup_139 [AlephFin AlephMed]","MemIni' lookup lookup_139 [AlephFin AlephMed]"],"1":["MemMed.EE' lookup lookup_139 [AlephFin AlephMed]","MemMed' lookup lookup_139 [AlephFin AlephMed]"],"2":["MemMed' lookup lookup_139 [AlephFin AlephMed]","MemMed.EE' lookup lookup_139 [AlephFin AlephMed]"],"3":["MemIni' lookup lookup_139 [AlephFin AlephMed]","MemMed.pe' lookup lookup_139 [AlephFin AlephMed]"]}}},"142":{"0":{"rules":{"0":["MemMed.pe' lookup lookup_139 [TawFin TawMed TawFin.alt12]","MemIni' lookup lookup_139 [TawFin TawMed TawFin.alt12]"],"1":["MemMed.EE' lookup lookup_139 [TawFin TawMed TawFin.alt12]","MemMed' lookup lookup_139 [TawFin TawMed TawFin.alt12]"],"2":["MemMed' lookup lookup_139 [TawFin TawMed TawFin.alt12]","MemMed.EE' lookup lookup_139 [TawFin TawMed TawFin.alt12]"],"3":["MemIni' lookup lookup_139 [TawFin TawMed TawFin.alt12]","MemMed.pe' lookup lookup_139 [TawFin TawMed TawFin.alt12]"]}}},"143":{"0":{"rules":{"0":["[MemIni.L MemMed.L MemMed.peL MemMed.EEL] TawMed' lookup lookup_139","[MemIni.L MemMed.L MemMed.peL MemMed.EEL] TawFin' lookup lookup_139"],"2":["[MemIni.L MemMed.L MemMed.peL MemMed.EEL] TawFin' lookup lookup_139","[MemIni.L MemMed.L MemMed.peL MemMed.EEL] TawMed' lookup lookup_139"]}}},"153":{"0":{"rules":{"0":["[MemMed MemIni MemMed.pe MemMed.EE] [dotbelowSogd twodotsbelowSogd curvebelowSogd hookbelowSogd longhookbelowSogd reshbelowSogd strokebelowSogd strokebelowSogd.2 strokebelowSogd.3 strokebelowSogd.4 strokebelowSogd.5 strokebelowSogd.6 strokebelowSogd.7 dotbelowSogd.rho twodotsbelowSogd.rho] SadheMed' lookup lookup_152 [dotbelowSogd twodotsbelowSogd curvebelowSogd hookbelowSogd longhookbelowSogd reshbelowSogd strokebelowSogd strokebelowSogd.2 strokebelowSogd.3 strokebelowSogd.4 strokebelowSogd.5 strokebelowSogd.6 strokebelowSogd.7 dotbelowSogd.rho twodotsbelowSogd.rho]","[MemMed MemIni MemMed.pe MemMed.EE] [dotbelowSogd twodotsbelowSogd curvebelowSogd hookbelowSogd longhookbelowSogd reshbelowSogd strokebelowSogd strokebelowSogd.2 strokebelowSogd.3 strokebelowSogd.4 strokebelowSogd.5 strokebelowSogd.6 strokebelowSogd.7 dotbelowSogd.rho twodotsbelowSogd.rho] SadheFin.alt09' lookup lookup_152 [dotbelowSogd twodotsbelowSogd curvebelowSogd hookbelowSogd longhookbelowSogd reshbelowSogd strokebelowSogd strokebelowSogd.2 strokebelowSogd.3 strokebelowSogd.4 strokebelowSogd.5 strokebelowSogd.6 strokebelowSogd.7 dotbelowSogd.rho twodotsbelowSogd.rho]"],"1":["[MemMed MemIni MemMed.pe MemMed.EE] SadheMed' lookup lookup_152 [dotbelowSogd twodotsbelowSogd curvebelowSogd hookbelowSogd longhookbelowSogd reshbelowSogd strokebelowSogd strokebelowSogd.2 strokebelowSogd.3 strokebelowSogd.4 strokebelowSogd.5 strokebelowSogd.6 strokebelowSogd.7 dotbelowSogd.rho twodotsbelowSogd.rho]","[MemMed MemIni MemMed.pe MemMed.EE] SadheFin.alt09' lookup lookup_152 [dotbelowSogd twodotsbelowSogd curvebelowSogd hookbelowSogd longhookbelowSogd reshbelowSogd strokebelowSogd strokebelowSogd.2 strokebelowSogd.3 strokebelowSogd.4 strokebelowSogd.5 strokebelowSogd.6 strokebelowSogd.7 dotbelowSogd.rho twodotsbelowSogd.rho]"],"2":["[MemMed MemIni MemMed.pe MemMed.EE] [dotbelowSogd twodotsbelowSogd curvebelowSogd hookbelowSogd longhookbelowSogd reshbelowSogd strokebelowSogd strokebelowSogd.2 strokebelowSogd.3 strokebelowSogd.4 strokebelowSogd.5 strokebelowSogd.6 strokebelowSogd.7 dotbelowSogd.rho twodotsbelowSogd.rho] SadheMed' lookup lookup_151","[MemMed MemIni MemMed.pe MemMed.EE] [dotbelowSogd twodotsbelowSogd curvebelowSogd hookbelowSogd longhookbelowSogd reshbelowSogd strokebelowSogd strokebelowSogd.2 strokebelowSogd.3 strokebelowSogd.4 strokebelowSogd.5 strokebelowSogd.6 strokebelowSogd.7 dotbelowSogd.rho twodotsbelowSogd.rho] SadheFin.alt09' lookup lookup_151"],"3":["[MemMed MemIni MemMed.pe MemMed.EE] SadheMed' lookup lookup_151","[MemMed MemIni MemMed.pe MemMed.EE] SadheFin.alt09' lookup lookup_151"],"8":["[MemMed MemIni MemMed.pe MemMed.EE] [dotbelowSogd twodotsbelowSogd curvebelowSogd hookbelowSogd longhookbelowSogd reshbelowSogd strokebelowSogd strokebelowSogd.2 strokebelowSogd.3 strokebelowSogd.4 strokebelowSogd.5 strokebelowSogd.6 strokebelowSogd.7 dotbelowSogd.rho twodotsbelowSogd.rho] SadheFin.alt09' lookup lookup_152 [dotbelowSogd twodotsbelowSogd curvebelowSogd hookbelowSogd longhookbelowSogd reshbelowSogd strokebelowSogd strokebelowSogd.2 strokebelowSogd.3 strokebelowSogd.4 strokebelowSogd.5 strokebelowSogd.6 strokebelowSogd.7 dotbelowSogd.rho twodotsbelowSogd.rho]","[MemMed MemIni MemMed.pe MemMed.EE] [dotbelowSogd twodotsbelowSogd curvebelowSogd hookbelowSogd longhookbelowSogd reshbelowSogd strokebelowSogd strokebelowSogd.2 strokebelowSogd.3 strokebelowSogd.4 strokebelowSogd.5 strokebelowSogd.6 strokebelowSogd.7 dotbelowSogd.rho twodotsbelowSogd.rho] SadheMed' lookup lookup_152 [dotbelowSogd twodotsbelowSogd curvebelowSogd hookbelowSogd longhookbelowSogd reshbelowSogd strokebelowSogd strokebelowSogd.2 strokebelowSogd.3 strokebelowSogd.4 strokebelowSogd.5 strokebelowSogd.6 strokebelowSogd.7 dotbelowSogd.rho twodotsbelowSogd.rho]"],"9":["[MemMed MemIni MemMed.pe MemMed.EE] SadheFin.alt09' lookup lookup_152 [dotbelowSogd twodotsbelowSogd curvebelowSogd hookbelowSogd longhookbelowSogd reshbelowSogd strokebelowSogd strokebelowSogd.2 strokebelowSogd.3 strokebelowSogd.4 strokebelowSogd.5 strokebelowSogd.6 strokebelowSogd.7 dotbelowSogd.rho twodotsbelowSogd.rho]","[MemMed MemIni MemMed.pe MemMed.EE] SadheMed' lookup lookup_152 [dotbelowSogd twodotsbelowSogd curvebelowSogd hookbelowSogd longhookbelowSogd reshbelowSogd strokebelowSogd strokebelowSogd.2 strokebelowSogd.3 strokebelowSogd.4 strokebelowSogd.5 strokebelowSogd.6 strokebelowSogd.7 dotbelowSogd.rho twodotsbelowSogd.rho]"],"10":["[MemMed MemIni MemMed.pe MemMed.EE] [dotbelowSogd twodotsbelowSogd curvebelowSogd hookbelowSogd longhookbelowSogd reshbelowSogd strokebelowSogd strokebelowSogd.2 strokebelowSogd.3 strokebelowSogd.4 strokebelowSogd.5 strokebelowSogd.6 strokebelowSogd.7 dotbelowSogd.rho twodotsbelowSogd.rho] SadheFin.alt09' lookup lookup_151","[MemMed MemIni MemMed.pe MemMed.EE] [dotbelowSogd twodotsbelowSogd curvebelowSogd hookbelowSogd longhookbelowSogd reshbelowSogd strokebelowSogd strokebelowSogd.2 strokebelowSogd.3 strokebelowSogd.4 strokebelowSogd.5 strokebelowSogd.6 strokebelowSogd.7 dotbelowSogd.rho twodotsbelowSogd.rho] SadheMed' lookup lookup_151"],"11":["[MemMed MemIni MemMed.pe MemMed.EE] SadheFin.alt09' lookup lookup_151","[MemMed MemIni MemMed.pe MemMed.EE] SadheMed' lookup lookup_151"]}}},"161":{"0":{"rules":{"0":["AlephMed.pe' lookup lookup_160 [AlephFin AlephMed MemMed ShinFin ShinMed ShinMed.Cx ShinMed.Dx ShinMed.Ex ShinMed.Fx MemMed.L MemMed.S MemMed.Dx]","AlephIni' lookup lookup_160 [AlephFin AlephMed MemMed ShinFin ShinMed ShinMed.Cx ShinMed.Dx ShinMed.Ex ShinMed.Fx MemMed.L MemMed.S MemMed.Dx]"],"1":["AlephMed.EE' lookup lookup_160 [AlephFin AlephMed MemMed ShinFin ShinMed ShinMed.Cx ShinMed.Dx ShinMed.Ex ShinMed.Fx MemMed.L MemMed.S MemMed.Dx]",null],"2":["AlephMed' lookup lookup_160 [AlephFin AlephMed MemMed ShinFin ShinMed ShinMed.Cx ShinMed.Dx ShinMed.Ex ShinMed.Fx MemMed.L MemMed.S MemMed.Dx]",null],"3":["AlephIni' lookup lookup_160 [AlephFin AlephMed MemMed ShinFin ShinMed ShinMed.Cx ShinMed.Dx ShinMed.Ex ShinMed.Fx MemMed.L MemMed.S MemMed.Dx]",null]}},"1":[null,{"type":"chained_sequence_context","rules":["AlephMed' lookup lookup_160 [AlephFin AlephMed MemMed ShinFin ShinMed ShinMed.Cx ShinMed.Dx ShinMed.Ex ShinMed.Fx MemMed.L MemMed.S MemMed.Dx]"]}],"2":[null,{"type":"chained_sequence_context","rules":["AlephMed.pe' lookup lookup_160 [AlephFin AlephMed MemMed ShinFin ShinMed ShinMed.Cx ShinMed.Dx ShinMed.Ex ShinMed.Fx MemMed.L MemMed.S MemMed.Dx]"]}],"3":[null,{"type":"chained_sequence_context","rules":["AlephMed.EE' lookup lookup_160 [AlephFin AlephMed MemMed ShinFin ShinMed ShinMed.Cx ShinMed.Dx ShinMed.Ex ShinMed.Fx MemMed.L MemMed.S MemMed.Dx]"]}]}}},"head":{"checksum_adjustment":[2616716385,2463047915],"modified":[3747732153,3813910887]},"hhea":{"caret_slope_rise":[1,1000]}},"cmap_diff":{},"locations":[{"location":"Default","words":{}}]};
+		function buildLocation_statichtml(loc) {
+  // Set font styles to appropriate axis locations
+  let rule = document.styleSheets[0].cssRules[2].style;
+  let cssSetting = "";
+  let textLocation = "Default";
+  if (loc.coords) {
+    cssSetting = Object.entries(loc.coords)
+      .map(function ([axis, value]) {
+        return `"${axis}" ${value}`;
+      })
+      .join(", ");
+    textLocation = Object.entries(loc.coords)
+      .map(function ([axis, value]) {
+        return `${axis}=${value}`;
+      })
+      .join(" ");
+    rule.setProperty("font-variation-settings", cssSetting);
+  }
+
+  $("#main").empty();
+
+  $("#title").html(`<h4 class="mt-2">${textLocation}</h2>`);
+
+  if (loc.glyphs) {
+    $("#main").append("<h4>Modified Glyphs</h4>");
+    let glyphs = $("<div>");
+    for (let glyph of loc.glyphs) {
+      addAGlyph(glyph, glyphs);
+    }
+    $("#main").append(glyphs);
+  }
+
+  if (loc.words) {
+    $("#main").append("<h4>Modified Words</h4>");
+    for (let [script, words] of Object.entries(loc.words)) {
+      let scriptTitle = $(`<h6>${script}</h6>`);
+      $("#main").append(scriptTitle);
+      let worddiv = $("<div>");
+      for (let word of words) {
+        addAWord(word, worddiv);
+      }
+      $("#main").append(worddiv);
+    }
+  }
+  $('[data-toggle="tooltip"]').tooltip();
+}
+
+$(function () {
+  if (report["tables"]) {
+    diffTables(report);
+  }
+  if (report["kerns"]) {
+    diffKerns(report);
+  }
+  cmapDiff(report);
+  $('[data-toggle="tooltip"]').tooltip();
+  if (!report["locations"]) {
+    $("#title").html("<h4 class='mt-2'>No differences found</h4>");
+    $("#ui-nav").hide();
+    return;
+  }
+
+  for (var [index, loc] of report["locations"].entries()) {
+    var loc_nav = $(`<li class="nav-item">
+		<a class="nav-link text-secondary" href="#" data-index="${index}">${loc.location.replaceAll(
+      ",",
+      ",\u200b"
+    )}</a>
+	</li>`);
+    $("#locationnav").append(loc_nav);
+  }
+  $("#locationnav li a").on("click", function (e) {
+    $("#locationnav li a").removeClass("active");
+    $(this).addClass("active");
+    buildLocation_statichtml(report.locations[$(this).data("index")]);
+  });
+  $("#locationnav li a").eq(0).click();
+
+  document.styleSheets[0].cssRules[0].style.setProperty(
+    "src",
+    "url(old-NotoSansSogdian-Regular.ttf)"
+  );
+  document.styleSheets[0].cssRules[1].style.setProperty(
+    "src",
+    "url(new-NotoSansSogdian-Regular.ttf)"
+  );
+  setupAnimation();
+});
+
+	</script>
+</body>
+
+</html>
